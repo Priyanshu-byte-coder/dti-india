@@ -86,10 +86,14 @@ the coder ID is read from the Instructions sheet), then `dti reliability` again 
 
 ## 7. PLFS (all rounds)
 
-1. Download unit-level data from https://microdata.gov.in (PLFS annual, 2017-18 onward),
-   person-level first-visit files. Put them under `data/raw/plfs/<round>/`.
+1. From https://microdata.gov.in (PLFS collection) download the **seven annual July–June
+   rounds**: 2017-18, 2018-19, 2019-20, 2020-21, 2021-22, 2022-23, 2023-24. Skip the
+   calendar-year files (they repeat the same interviews) and the 2025 redesign files.
+   Per round take the first-visit person file, first-visit household file, data layout
+   and instruction manual. Put them under `data/raw/plfs/<round>/`.
 2. In `configs/plfs.yaml`, for each round fill `files`, `format` and `columns` (raw column
-   name for each standard name; see the comment at the top of the file). For fixed-width
+   name for each standard name; see the comment at the top of the file). Religion and
+   social group come from the household file: fill the round's `household:` block. For fixed-width
    files, make a layout CSV (`name,start,width`) from the round's data layout sheet.
 3. Check every code list under `codes:` against that round's instruction manual
    (status, education, contract, social security).

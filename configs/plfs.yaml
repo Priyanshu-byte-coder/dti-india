@@ -22,6 +22,17 @@ rounds:
 
 # Supported formats: csv, tsv, parquet, dta, fwf. For fwf give `layout: <csv with name,start,width>`
 # (start is 1-based, as in the MoSPI data layout sheets).
+#
+# Household file: religion, social group etc. are in the first-visit household file.
+# Add to a round:
+#   household:
+#     files: [data/raw/plfs/2017-18/hh_fv.txt]
+#     layout: data/raw/plfs/2017-18/hh_layout.csv     # if fwf
+#     keys: [<raw cols identifying a household, present in both files, e.g. FSU, hamlet group/sub-block, second-stage stratum, sample household no.>]
+#     columns: [<raw household columns to bring over, e.g. religion, social group>]
+# then refer to those raw names in `columns` as usual (e.g. religion: <raw name>).
+# Download per round: first-visit person file, first-visit household file, data layout,
+# instruction manual. Annual July-June rounds only (calendar-year files repeat the same interviews).
 
 codes:
   sector: {rural: 1, urban: 2}

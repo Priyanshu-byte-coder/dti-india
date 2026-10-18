@@ -42,6 +42,18 @@ def _num(s: pd.Series) -> pd.Series:
 def read_round(name: str, rcfg: dict[str, Any], root: Path) -> pd.DataFrame:
     layout = root / rcfg["layout"] if rcfg.get("layout") else None
     raw = pd.concat([_read_file(root / f, rcfg["format"], layout) for f in rcfg["files"]], ignore_index=True)
+
+    # household-level variables (religion, social group, household type...) live in a
+    # separate PLFS file; bring the listed columns onto every person of the household
+    if hh := rcfg.get("household"):
+        hh_layout = root / hh["layout"] if hh.get("layout") else None
+        hraw = pd.concat([_read_file(root / f, hh.get("format", rcfg["format"]), hh_layout) for f in hh["files"]],
+                         ignore_index=True)
+        keys = hh["keys"]
+        hraw = hraw[[*keys, *hh["columns"]]].drop_duplicates(keys)
+        clash = [c for c in hh["columns"] if c in raw.columns]
+        raw = raw.drop(columns=clash).merge(hraw, on=keys, how="left", validate="many_to_one")
+
     cols = rcfg["columns"]
     missing = [k for k in REQUIRED if k not in cols]
     if missing:

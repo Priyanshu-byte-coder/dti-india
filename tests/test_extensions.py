@@ -125,6 +125,21 @@ def synthetic_panel(tmp_path_factory):
     return attach_dti(pd.concat(frames, ignore_index=True), d15, d04)
 
 
+def test_household_file_merge(tmp_path):
+    person = pd.DataFrame({"fsu": [1, 1, 2], "hh": [1, 1, 1], "age": [30, 5, 40], "relig": [9, 9, 9]})
+    house = pd.DataFrame({"fsu": [1, 2], "hh": [1, 1], "relig": [1, 2], "sg": [3, 9], "mult": [7, 8]})
+    person.to_csv(tmp_path / "p.csv", index=False)
+    house.to_csv(tmp_path / "h.csv", index=False)
+    rcfg = {"year": 2022, "occ_system": "nco2015", "format": "csv", "files": ["p.csv"],
+            "household": {"files": ["h.csv"], "keys": ["fsu", "hh"], "columns": ["relig", "sg"]},
+            "columns": {"state": "fsu", "sector": "fsu", "sex": "fsu", "age": "age", "cws_status": "fsu",
+                        "occ3": "fsu", "nic": "fsu", "gen_edu": "fsu", "mult": "fsu",
+                        "religion": "relig", "social_group": "sg"}}
+    df = read_round("x", rcfg, tmp_path)
+    assert df["religion"].tolist() == ["1", "1", "2"]  # household value replaces the person-file column
+    assert df["social_group"].tolist() == ["3", "3", "9"]
+
+
 def test_harmonise_and_merge(synthetic_panel):
     h = synthetic_panel
     assert set(h["occ_system"]) == {"nco2004", "nco2015"}
