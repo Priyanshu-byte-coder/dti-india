@@ -1,0 +1,60 @@
+# Wage analysis (RQ3-RQ4). Defaults follow the proposals in the plan; items marked
+# OPEN are still to be confirmed by the professors (see docs/decisions.md).
+
+dti:
+  model_name: qwen32b          # which LLM's DTI to use (folder name under data/llm/)
+  prompt_version: null         # null = the only/latest version found
+  aggregation: mean            # mean | median (within-group aggregation used by `dti aggregate`)
+
+sample:
+  age_min: 15                  # OPEN (A3): 15-64 vs 15-59
+  age_max: 64
+  emp_types: [regular, casual] # OPEN (A2): main sample; self-employed analysed separately
+  outcome: ln_real_hourly_wage # OPEN (A1): hourly main, monthly as robustness
+  rounds: null                 # null = all harmonised rounds (pre- and post-2021)
+
+controls: [age, age2, female, married, rural]
+
+fe_sets:
+  basic: [yq]
+  demo: [yq, edu_cat, social_group, religion]
+  full: [yq, edu_cat, social_group, religion, state, nic2]
+  preferred: [yq, edu_cat, social_group, religion, state, nic2, division]   # OPEN (A5)
+  occupation: [yq, edu_cat, social_group, religion, state, nic2, occ_cluster]
+
+cluster: occ_cluster           # OPEN (A7): DTI varies by occupation, so cluster there
+weights: weight                # OPEN (A8): weighted main, unweighted robustness
+
+specs:                         # baseline ladder; M4 is the preferred specification
+  M1: {terms: [dti_std], controls: false, fe: basic}
+  M2: {terms: [dti_std], controls: true, fe: demo}
+  M3: {terms: [dti_std], controls: true, fe: full}
+  M4: {terms: [dti_std], controls: true, fe: preferred}
+  M5: {terms: [D1_std, D2_std, D3_std, D4_std, D5_std], controls: true, fe: preferred}
+
+preferred: M4
+
+wild_bootstrap_reps: 999
+
+heterogeneity:                 # OPEN (A13): pre-specified dimensions
+  binary: [female, rural]
+  categorical: {edu_band: up_to_primary, age_band: 25-34, emp_type: regular}
+  formality: formal_ss         # regular wage workers only
+
+selection:                     # OPEN (A9): Heckman exclusion restrictions
+  exclusions: [hh_children_u6, hh_size, hh_head]
+
+quantiles: [0.1, 0.25, 0.5, 0.75, 0.9]
+cqr_max_obs: 100000            # conditional quantile regression on a random subsample
+
+oaxaca:
+  group: female                # gap = male - female
+
+oster:
+  rmax_multiplier: 1.3         # Oster (2019) default R_max = 1.3 x R_controlled
+
+dml:
+  max_obs: 200000
+  n_folds: 5
+  max_iter: 200
+  blp_basis: [female, rural, edu_middle_secondary, edu_tertiary, casual, age_15_24, age_45_64]

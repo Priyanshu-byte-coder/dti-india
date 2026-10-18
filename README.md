@@ -19,10 +19,11 @@ by occupation code for the wage analysis.
 | 4 | Consensus, DTI, aggregation to NCO-2015 4/3-digit and NCO-2004 3-digit | done: `dti aggregate` |
 | 5 | Reliability: run stability, cross-model, human vs LLM | done: `dti reliability` — needs data |
 | 6 | Keyword baseline on NCO text | done: `dti baseline` |
-| 7 | O\*NET DTI + India–US gap (RQ2) | to do |
-| 8 | PLFS cleaning (all rounds) + merge | to do — needs microdata |
-| 9 | Wage models and heterogeneity (RQ3–RQ4) | to do |
+| 7 | O\*NET: same-prompt LLM scoring of O\*NET text, conventional measures, ISCO-08 crosswalk, India–US gap (RQ2) | done: `dti onet-download`, `onet-build`, `score --corpus onet`, `gap` — needs GPU + 2 BLS files |
+| 8 | PLFS harmonisation, all rounds (NCO-2004 and NCO-2015), wages, weights, DTI merge | done: `dti plfs-build` — needs microdata + column mapping |
+| 9 | Wage models (RQ3–RQ4): FE ladder, Oster, robustness, wild bootstrap, Heckman, RIF/quantile, Oaxaca, interactions, DoubleML BLP/GATE, grf export | done: `dti analysis` — tested on synthetic data |
 
+**Running it:** step-by-step runbook in [docs/HANDOFF.md](docs/HANDOFF.md).
 Decisions taken and open questions: [docs/decisions.md](docs/decisions.md).
 
 ## Setup
@@ -47,6 +48,17 @@ dti score --model mock --sample data/interim/pilot_50_seed0.csv --runs 3
 dti aggregate                     # -> data/processed/
 dti baseline
 dti reliability                   # -> reports/  (reads data/human/*.xlsx if present)
+
+# O*NET benchmark (RQ2)
+dti onet-download && dti onet-build
+dti score --model <m> --corpus onet && dti aggregate --corpus onet
+dti gap --model <m>               # -> reports/gap/
+
+# PLFS + wage models (RQ3-RQ4); dry run on synthetic data first
+dti synth-plfs --model <m>
+dti plfs-build --config data/synthetic/plfs_synthetic.yaml --model <m> --out data/synthetic/plfs_harmonised.parquet
+dti analysis --input data/synthetic/plfs_harmonised.parquet --out reports/econ_synthetic
+dti plfs-build --model <m> && dti analysis    # real data, after filling configs/plfs.yaml
 ```
 
 ### On the Nirma GPU server
@@ -103,7 +115,11 @@ number becomes `1111.01`.
 
 - `data/human/`: filled coder forms (coders' personal data) — share privately, drop the
   `.xlsx` files here to run `dti reliability`.
-- `data/raw/`: PLFS microdata (MoSPI terms do not allow redistribution).
-- `data/llm/`, `data/processed/`, `reports/`: generated; reproducible from code + corpus.
+- `data/raw/`: O\*NET and BLS downloads, PLFS microdata (MoSPI terms do not allow redistribution).
+- `data/llm/`, `data/processed/`, `data/synthetic/`, `reports/`: generated; reproducible from code + inputs.
 
 Reference papers are cited in the plan document and are not stored here.
+
+## Attribution
+
+`data/interim/onet_corpus.csv` and the O\*NET measures are built from the O\*NET 31.0 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license. USDOL/ETA has not approved, endorsed, or tested these modifications.

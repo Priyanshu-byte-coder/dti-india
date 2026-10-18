@@ -56,12 +56,12 @@ def pairwise(a: pd.Series, b: pd.Series) -> dict[str, float]:
     }
 
 
-def run_stability(runs: pd.DataFrame) -> pd.DataFrame:
+def run_stability(runs: pd.DataFrame, key: str = "nco2015") -> pd.DataFrame:
     """Intra-model stability across repeated runs, per model and dimension."""
     rows = []
     for (model, version), g in runs.groupby(["model_name", "prompt_version"]):
         for d in DIMENSIONS:
-            wide = g.pivot(index="nco2015", columns="run", values=d)
+            wide = g.pivot(index=key, columns="run", values=d)
             icc_1, icc_k = icc2(wide.to_numpy())
             rows.append({
                 "model_name": model,
@@ -83,12 +83,12 @@ def unstable_occupations(cons: pd.DataFrame, sd_threshold: float = 0.5) -> pd.Da
     return cons[cons["max_sd"] > sd_threshold].sort_values("max_sd", ascending=False)
 
 
-def cross_model(cons: pd.DataFrame) -> pd.DataFrame:
+def cross_model(cons: pd.DataFrame, key: str = "nco2015") -> pd.DataFrame:
     rows = []
     models = sorted(cons["model_name"].unique())
     for m1, m2 in combinations(models, 2):
-        a = cons[cons["model_name"] == m1].set_index("nco2015")
-        b = cons[cons["model_name"] == m2].set_index("nco2015")
+        a = cons[cons["model_name"] == m1].set_index(key)
+        b = cons[cons["model_name"] == m2].set_index(key)
         for col in [*DIMENSIONS, "q9_overall"]:
             rows.append({"model_a": m1, "model_b": m2, "item": col, **pairwise(a[col], b[col])})
     return pd.DataFrame(rows)

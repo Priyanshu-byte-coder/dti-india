@@ -1,0 +1,23 @@
+# O*NET benchmark (RQ2): sources, items and crosswalk files.
+
+version: "31.0"
+base_url: "https://www.onetcenter.org/dl_files/database/db_{v}_csv/{file}.csv"   # {v} = 31_0
+files: [occupation_data, task_statements, work_activities, knowledge, work_context]
+taxonomy_crosswalk_url: "https://www.onetcenter.org/taxonomy/2019/walk/2010_to_2019_Crosswalk.csv?fmt=csv"
+raw_dir: data/raw/onet
+
+# Conventional O*NET digital items (element id, scale)
+items:
+  wa_computers: {file: work_activities, element: "4.A.3.b.1", name: "Working with Computers"}
+  kn_computers: {file: knowledge, element: "2.C.3.a", name: "Computers and Electronics"}
+  cx_email: {file: work_context, element: "4.C.1.a.2.h", name: "E-Mail", scale: CX}
+
+# BLS files. bls.gov blocks scripted downloads ("Access Denied"): download these two
+# in a browser and save them under data/raw/bls/ with the file names below.
+bls:
+  isco_soc_crosswalk:
+    path: data/raw/bls/ISCO_SOC_Crosswalk.xls
+    url: "https://www.bls.gov/soc/ISCO_SOC_Crosswalk.xls"            # ISCO-08 <-> SOC 2010
+  oews_national:
+    path: data/raw/bls/oews_national.xlsx
+    url: "https://www.bls.gov/oes/tables.htm"                         # 'National' xlsx, latest May release (SOC 2018)

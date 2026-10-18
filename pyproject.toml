@@ -17,6 +17,12 @@ dependencies = [
     "scipy>=1.11",
     "scikit-learn>=1.3",
     "krippendorff>=0.6",
+    "statsmodels>=0.14",
+    "pyfixest>=0.30",
+    "wildboottest>=0.3",
+    "doubleml>=0.9",
+    "xlrd>=2.0",
+    "pyarrow>=14",
 ]
 
 [project.optional-dependencies]

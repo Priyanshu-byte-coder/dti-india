@@ -1,0 +1,64 @@
+# PLFS harmonisation. One entry per round; every round maps its raw column names to
+# the standard names used by the code (left side). Fill `columns` after opening the
+# round's person-level first-visit file and its data layout. Codes below follow the
+# PLFS instruction manuals; check them against each round's manual before the run.
+#
+# Standard names
+#   required: state, sector, sex, age, cws_status, occ3, nic, gen_edu, mult
+#   optional: district, fsu, stratum, quarter, visit, nss, nsc, marital, social_group,
+#             religion, relation, hhid_parts (list), earn_regular, earn_casual, earn_self,
+#             hours (single column or list of daily columns to sum), contract, paid_leave,
+#             social_security
+# A list value for earn_* or hours means "sum these columns".
+
+rounds:
+  "2017-18": {year: 2017, occ_system: nco2004, format: csv, files: [data/raw/plfs/2017-18/person_fv.csv], columns: {}}
+  "2018-19": {year: 2018, occ_system: nco2004, format: csv, files: [data/raw/plfs/2018-19/person_fv.csv], columns: {}}
+  "2019-20": {year: 2019, occ_system: nco2004, format: csv, files: [data/raw/plfs/2019-20/person_fv.csv], columns: {}}
+  "2020-21": {year: 2020, occ_system: nco2004, format: csv, files: [data/raw/plfs/2020-21/person_fv.csv], columns: {}}
+  "2021-22": {year: 2021, occ_system: nco2015, format: csv, files: [data/raw/plfs/2021-22/person_fv.csv], columns: {}}
+  "2022-23": {year: 2022, occ_system: nco2015, format: csv, files: [data/raw/plfs/2022-23/person_fv.csv], columns: {}}
+  "2023-24": {year: 2023, occ_system: nco2015, format: csv, files: [data/raw/plfs/2023-24/person_fv.csv], columns: {}}
+
+# Supported formats: csv, tsv, parquet, dta, fwf. For fwf give `layout: <csv with name,start,width>`
+# (start is 1-based, as in the MoSPI data layout sheets).
+
+codes:
+  sector: {rural: 1, urban: 2}
+  sex: {male: 1, female: 2}
+  status:                       # current weekly status (CWS) activity codes
+    self_employed: [11, 12, 21]
+    regular: [31]
+    casual: [41, 42, 51]
+    unemployed: [81, 82]
+  gen_edu:                      # general education level -> category
+    illiterate: [1]
+    below_primary: [2, 3, 4, 5]
+    primary: [6]
+    middle: [7]
+    secondary: [8]
+    higher_secondary: [10]
+    diploma: [11]
+    graduate: [12]
+    postgraduate: [13]
+  edu_band:                     # coarser bands for heterogeneity
+    up_to_primary: [illiterate, below_primary, primary]
+    middle_secondary: [middle, secondary, higher_secondary]
+    tertiary: [diploma, graduate, postgraduate]
+  marital: {currently_married: [2]}
+  relation: {head: [1]}
+  contract_written: [2, 3, 4]   # type of job contract: 1 = no written contract
+  paid_leave_yes: [1]
+  social_security_yes: [1, 2, 3, 4, 5, 6, 7]   # 8 = not eligible, 9 = don't know
+
+weights:
+  rule: plfs_standard           # mult/100 if nss == nsc else mult/200 (mult/100 when nss/nsc absent)
+
+deflator:
+  path: data/raw/cpi.csv        # optional: columns state, sector, year, cpi (any base); nominal if absent
+  base_year: 2023
+
+wages:
+  weeks_per_month: 4.33         # monthly <-> weekly for regular earnings
+  self_days: 30                 # self-employment earnings reference period (days)
+  trim_pct: [0.5, 99.5]         # drop hourly-wage outliers within each round

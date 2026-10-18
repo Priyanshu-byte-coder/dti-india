@@ -1,4 +1,9 @@
-"""Score the corpus: occupations x runs, resumable, one JSONL line per (occupation, run)."""
+"""Score a corpus: occupations x runs, resumable, one JSONL line per (occupation, run).
+
+A corpus is any table with `code`, `title` and `description`. The NCO-2015 corpus is
+the main one; the O*NET corpus is scored with the identical prompt so the India-US gap
+reflects the occupation texts, not a different instrument.
+"""
 
 from __future__ import annotations
 
@@ -17,12 +22,12 @@ from .llm import make_scorer
 from .prompt import prompt_version
 
 
-def output_path(model_name: str, version: str) -> Path:
-    return LLM_OUT / model_name / version / "scores.jsonl"
+def output_path(model_name: str, version: str, corpus_name: str) -> Path:
+    return LLM_OUT / model_name / version / f"{corpus_name}.jsonl"
 
 
 def completed_keys(path: Path) -> set[tuple[str, int]]:
-    """(nco2015, run) pairs already scored successfully; failed ones are retried."""
+    """(code, run) pairs already scored successfully; failed ones are retried."""
     done: set[tuple[str, int]] = set()
     if not path.exists():
         return done
@@ -32,7 +37,7 @@ def completed_keys(path: Path) -> set[tuple[str, int]]:
                 continue
             rec = json.loads(line)
             if rec.get("ok"):
-                done.add((rec["nco2015"], rec["run"]))
+                done.add((rec["code"], rec["run"]))
     return done
 
 
@@ -40,11 +45,15 @@ async def score_corpus(
     corpus: pd.DataFrame,
     settings: dict[str, Any],
     rubric: dict[str, Any],
+    corpus_name: str,
     runs: int | None = None,
 ) -> Path:
+    missing = {"code", "title", "description"} - set(corpus.columns)
+    if missing:
+        raise ValueError(f"corpus needs columns {sorted(missing)}")
     runs = runs or settings["runs"]
     version = prompt_version(rubric)
-    path = output_path(settings["name"], version)
+    path = output_path(settings["name"], version, corpus_name)
     path.parent.mkdir(parents=True, exist_ok=True)
 
     done = completed_keys(path)
@@ -52,10 +61,10 @@ async def score_corpus(
         (row, run)
         for row in corpus.itertuples(index=False)
         for run in range(runs)
-        if (row.nco2015, run) not in done
+        if (row.code, run) not in done
     ]
     total = len(corpus) * runs
-    print(f"[{settings['name']}] prompt {version}: {total - len(todo)}/{total} done, {len(todo)} to score -> {path}")
+    print(f"[{settings['name']}/{corpus_name}] prompt {version}: {total - len(todo)}/{total} done, {len(todo)} to score -> {path}")
     if not todo:
         return path
 
@@ -71,7 +80,8 @@ async def score_corpus(
             async with sem:
                 res = await scorer.score(row.title, row.description, seed=run)
             rec = {
-                "nco2015": row.nco2015,
+                "corpus": corpus_name,
+                "code": row.code,
                 "run": run,
                 "seed": run,
                 "model_name": settings["name"],

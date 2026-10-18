@@ -21,7 +21,8 @@ from .config import DIMENSIONS
 CATEGORICAL = ("q1_detail", "q10_core", "q11_india_today")
 
 
-def load_runs(paths: list[Path], prompt_version: str | None = None) -> pd.DataFrame:
+def load_runs(paths: list[Path], key: str = "nco2015", prompt_version: str | None = None) -> pd.DataFrame:
+    """Successful runs from JSONL files; the record's `code` is returned as column `key`."""
     rows = []
     for path in paths:
         with open(path, encoding="utf-8") as f:
@@ -37,7 +38,7 @@ def load_runs(paths: list[Path], prompt_version: str | None = None) -> pd.DataFr
                 row = {
                     "model_name": rec["model_name"],
                     "prompt_version": rec["prompt_version"],
-                    "nco2015": rec["nco2015"],
+                    key: rec["code"],
                     "run": rec["run"],
                     "q1_detail": c["q1_detail"],
                     "q9_overall": c["q9_overall"],
@@ -53,11 +54,11 @@ def load_runs(paths: list[Path], prompt_version: str | None = None) -> pd.DataFr
     if df.empty:
         raise ValueError("no successful LLM records found")
     # a resumed job can leave a duplicate (occupation, run); keep the last
-    return df.drop_duplicates(["model_name", "prompt_version", "nco2015", "run"], keep="last")
+    return df.drop_duplicates(["model_name", "prompt_version", key, "run"], keep="last")
 
 
-def consensus(runs: pd.DataFrame) -> pd.DataFrame:
-    keys = ["model_name", "prompt_version", "nco2015"]
+def consensus(runs: pd.DataFrame, key: str = "nco2015") -> pd.DataFrame:
+    keys = ["model_name", "prompt_version", key]
     g = runs.groupby(keys)
     out = g.size().rename("n_runs").to_frame()
     for d in DIMENSIONS:
@@ -109,12 +110,13 @@ def aggregate_level(
     level_map: pd.DataFrame,
     level: str,
     how: str = "mean",
+    key: str = "nco2015",
 ) -> pd.DataFrame:
     """Aggregate occupation-level scores to `level`. NCO has no employment counts below
     3-digit, so occupations within a group are weighted equally (`how` = mean | median)."""
     value_cols = [*DIMENSIONS, "dti_z", "dti_0_100", "dti_mean_score", "q9_overall"]
-    overlap = [c for c in level_map.columns if c != "nco2015" and c in occ.columns]
-    df = occ.drop(columns=overlap).merge(level_map, on="nco2015", how="left", validate="many_to_one")
+    overlap = [c for c in level_map.columns if c != key and c in occ.columns]
+    df = occ.drop(columns=overlap).merge(level_map, on=key, how="left", validate="many_to_one")
     df = df[df[level].fillna("") != ""]
     keys = ["model_name", "prompt_version", level]
     out = df.groupby(keys)[value_cols].agg(how)

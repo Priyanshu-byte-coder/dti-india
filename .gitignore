@@ -19,8 +19,11 @@ reports/
 # Filled human coder forms: personal data of coders, shared privately
 data/human/
 
-# PLFS microdata: MoSPI terms do not allow redistribution
+# Raw downloads (O*NET, BLS) and PLFS microdata (MoSPI terms do not allow redistribution)
 data/raw/
+
+# Synthetic PLFS for dry runs (regenerate with `dti synth-plfs`)
+data/synthetic/
 
 # Excel lock files
 ~$*.xlsx

@@ -14,6 +14,10 @@ items are listed at the end; the full question list is in
 | 2026-10-18 | Occupations within a family/group are **weighted equally** when aggregating (no employment counts exist below 3-digit). Mean by default, median as robustness. | Implementation default | `dti aggregate --how mean|median` |
 | 2026-10-18 | DTI = equal-weight sum of the five z-scored dimensions, re-standardised (abstract eq. 1). | Abstract | `configs/rubric.yaml` → `aggregation.weights` |
 
+| 2026-10-18 | O\*NET benchmark uses O\*NET 31.0. The main O\*NET measure is the **same LLM prompt** run on O\*NET text (description + core tasks), so the gap reflects the texts, not the method. Conventional measures (keyword share of core tasks, Working with Computers, Computers and Electronics, e-mail, Muro-style score) are reported alongside. | Implementation default | `src/dti/onet.py`, `src/dti/gap.py` |
+| 2026-10-18 | O\*NET → NCO path: O\*NET-SOC 2019 → 2010 (O\*NET crosswalk) → SOC 2010 → ISCO-08 (BLS) = NCO-2015 family; US employment weights (OEWS), split equally across many-to-many links. | Implementation default | `onet_isco_links` |
+| 2026-10-18 | Wage-model defaults follow the plan's proposals (hourly wage, regular + casual, 15–64, division FE preferred, occupation-clustered SEs, PLFS weights). Each is marked OPEN in `configs/analysis.yaml` until confirmed. | Plan proposals | `configs/analysis.yaml` |
+
 ## NCO-2015 → NCO-2004 link (for pre-July-2021 PLFS)
 
 The coder form carries an NCO-2004 concordance code (NCO-2015 Vol I) for 2,657 of 3,450
@@ -52,3 +56,9 @@ PLFS 2017-18 to 2020-21 should appear in `dti_group3_nco2004.csv`.
    a real test. Temperature 0 would make runs near-identical (stability trivially high).
 5. **NCO-2004 link for new occupations** — accept the sibling-mode rule above, or use an
    official NCO-2004/2015 concordance table if the professors have one.
+6. **Wage-model choices** marked OPEN in `configs/analysis.yaml` (A1–A13 of the meeting list):
+   outcome, sample, age band, occupation controls, clustering, weights, Heckman exclusion
+   restrictions, heterogeneity list.
+7. **Pooling NCO-2004 and NCO-2015 rounds**: the DTI is matched within each system, then
+   standardised across all workers in the pooled sample. Robustness reruns each system
+   separately (`robustness.csv`).
