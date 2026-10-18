@@ -19,7 +19,7 @@ by occupation code for the wage analysis.
 | 4 | Consensus, DTI, aggregation to NCO-2015 4/3-digit and NCO-2004 3-digit | done: `dti aggregate` |
 | 5 | Reliability: run stability, cross-model, human vs LLM | done: `dti reliability` — needs data |
 | 6 | Keyword baseline on NCO text | done: `dti baseline` |
-| 7 | O\*NET: same-prompt LLM scoring of O\*NET text, conventional measures, ISCO-08 crosswalk, India–US gap (RQ2) | done: `dti onet-download`, `onet-build`, `score --corpus onet`, `gap` — needs GPU + 2 BLS files |
+| 7 | O\*NET: same-prompt LLM scoring of O\*NET text, conventional measures, ISCO-08 crosswalk, India–US gap (RQ2) | done: `dti onet-download`, `onet-build`, `score --corpus onet`, `gap` — needs GPU (O\*NET and BLS files are in `data/raw/`) |
 | 8 | PLFS harmonisation, all rounds (NCO-2004 and NCO-2015), wages, weights, DTI merge | done: `dti plfs-build` — needs microdata + column mapping |
 | 9 | Wage models (RQ3–RQ4): FE ladder, Oster, robustness, wild bootstrap, Heckman, RIF/quantile, Oaxaca, interactions, DoubleML BLP/GATE, grf export | done: `dti analysis` — tested on synthetic data |
 
@@ -115,11 +115,14 @@ number becomes `1111.01`.
 
 - `data/human/`: filled coder forms (coders' personal data) — share privately, drop the
   `.xlsx` files here to run `dti reliability`.
-- `data/raw/`: O\*NET and BLS downloads, PLFS microdata (MoSPI terms do not allow redistribution).
+- `data/raw/onet/`, `data/raw/bls/`: raw O\*NET 31.0 and BLS files (committed).
+- `data/raw/plfs/`: PLFS microdata, never committed (MoSPI terms do not allow redistribution).
 - `data/llm/`, `data/processed/`, `data/synthetic/`, `reports/`: generated; reproducible from code + inputs.
 
 Reference papers are cited in the plan document and are not stored here.
 
 ## Attribution
 
-`data/interim/onet_corpus.csv` and the O\*NET measures are built from the O\*NET 31.0 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license. USDOL/ETA has not approved, endorsed, or tested these modifications.
+`data/interim/onet_corpus.csv` and the O\*NET measures are built from the O\*NET 31.0 Database by the U.S. Department of Labor, Employment and Training Administration (USDOL/ETA), used under the CC BY 4.0 license. USDOL/ETA has not approved, endorsed, or tested these modifications. The raw O\*NET files are in `data/raw/onet/`.
+
+`data/raw/bls/` holds the BLS ISCO-08 × SOC 2010 crosswalk and the May 2025 OEWS national estimates (U.S. Bureau of Labor Statistics, public domain).

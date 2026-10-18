@@ -2,3 +2,5 @@
 *.xlsx binary
 *.docx binary
 *.pdf binary
+*.xls binary
+data/raw/** -text

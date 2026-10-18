@@ -19,8 +19,12 @@ reports/
 # Filled human coder forms: personal data of coders, shared privately
 data/human/
 
-# Raw downloads (O*NET, BLS) and PLFS microdata (MoSPI terms do not allow redistribution)
-data/raw/
+# Raw downloads: PLFS microdata stays out (MoSPI terms do not allow redistribution).
+# O*NET (CC BY 4.0) and BLS (US public domain) raw files are committed so nobody has to
+# download them again; bls.gov blocks scripted downloads.
+data/raw/*
+!data/raw/onet/
+!data/raw/bls/
 
 # Synthetic PLFS for dry runs (regenerate with `dti synth-plfs`)
 data/synthetic/
