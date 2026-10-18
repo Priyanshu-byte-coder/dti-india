@@ -5,14 +5,59 @@
 #
 # Standard names
 #   required: state, sector, sex, age, cws_status, occ3, nic, gen_edu, mult
-#   optional: district, fsu, stratum, quarter, visit, nss, nsc, marital, social_group,
+#   optional: district, fsu, stratum, quarter, visit, nss, nsc, no_qtr, marital, social_group,
 #             religion, relation, hhid_parts (list), earn_regular, earn_casual, earn_self,
 #             hours (single column or list of daily columns to sum), contract, paid_leave,
 #             social_security
 # A list value for earn_* or hours means "sum these columns".
 
 rounds:
-  "2017-18": {year: 2017, occ_system: nco2004, format: csv, files: [data/raw/plfs/2017-18/person_fv.csv], columns: {}}
+  # 2017-18: verified against Data_LayoutPLFS and the data files (MoSPI CSV release).
+  # Occupation/industry/earnings are from the CWS block (b6); contract, paid leave and
+  # social security exist only for the usual principal activity (b5pt1).
+  "2017-18":
+    year: 2017
+    occ_system: nco2004
+    format: csv
+    files: [data/raw/plfs/2017-18/data/hh_per_fv_2017-18.csv]
+    household:
+      files: [data/raw/plfs/2017-18/data/hhfv_2017-18.csv]
+      keys: {quarter_per_fv: qtr_hh_fv, fsu_per_fv: b1q1_hh_fv, b1q13_per_fv: b1q13_hh_fv, b1q14_per_fv: b1q14_hh_fv, b1q15_per_fv: b1q15_hh_fv}
+      columns: [b3q1_hh_fv, b3q2_hh_fv, b3q3_hh_fv, b3q4_hh_fv]   # hh size, hh type, religion, social group
+    columns:
+      quarter: quarter_per_fv
+      visit: visit_per_fv
+      sector: b1q3_per_fv
+      state: state_per_fv
+      district: b1q4_per_fv
+      stratum: b1q5_per_fv
+      fsu: fsu_per_fv
+      hhid_parts: [quarter_per_fv, fsu_per_fv, b1q13_per_fv, b1q14_per_fv, b1q15_per_fv]
+      relation: b4q4_per_fv
+      sex: b4q5_per_fv
+      age: b4q6_per_fv
+      marital: b4q7_per_fv
+      gen_edu: b4q8_per_fv
+      religion: b3q3_hh_fv
+      social_group: b3q4_hh_fv
+      cws_status: b6q5_per_fv
+      nic: b6q6_per_fv
+      occ3: b6q7_per_fv
+      earn_regular: b6q9_per_fv          # regular salaried/wage earnings, last calendar month
+      earn_self: b6q10_per_fv            # self-employment gross earnings, last 30 days
+      earn_casual: [b6q9_3pt1_Act1_per_fv, b6q9_3pt1_Act2_per_fv, b6q9_3pt2_Act1_per_fv, b6q9_3pt2_Act2_per_fv,
+                    b6q9_3pt3_Act1_per_fv, b6q9_3pt3_Act2_per_fv, b6q9_3pt4_Act1_per_fv, b6q9_3pt4_Act2_per_fv,
+                    b6q9_3pt5_Act1_per_fv, b6q9_3pt5_Act2, b6q9_3pt6_Act1, b6q9_Act2_3pt6,
+                    b6q9_Act1_3pt7, b6q9_Act2_3pt7]          # daily wage earnings, 7 days x 2 activities
+      hours: [b6q7_3pt1_per_fv, b6q7_3pt2_per_fv, b6q7_3pt3_per_fv, b6q7_3pt4_per_fv,
+              b6q7_3pt5, b6q7_3pt6, b6q7_3pt7_per_fv]     # total hours actually worked, each day
+      contract: b5pt1q11_per_fv
+      paid_leave: b5pt1q12_per_fv
+      social_security: b5pt1q13_per_fv
+      mult: MULT_per_fv
+      nss: NSS_per_fv
+      nsc: NSC_per_fv
+      no_qtr: No_qtr_per_fv
   "2018-19": {year: 2018, occ_system: nco2004, format: csv, files: [data/raw/plfs/2018-19/person_fv.csv], columns: {}}
   "2019-20": {year: 2019, occ_system: nco2004, format: csv, files: [data/raw/plfs/2019-20/person_fv.csv], columns: {}}
   "2020-21": {year: 2020, occ_system: nco2004, format: csv, files: [data/raw/plfs/2020-21/person_fv.csv], columns: {}}
@@ -63,7 +108,7 @@ codes:
   social_security_yes: [1, 2, 3, 4, 5, 6, 7]   # 8 = not eligible, 9 = don't know
 
 weights:
-  rule: plfs_standard           # mult/100 if nss == nsc else mult/200 (mult/100 when nss/nsc absent)
+  rule: plfs_annual             # (mult/100 if nss == nsc else mult/200) / no_qtr  — PLFS README; `plfs_quarterly` skips /no_qtr
 
 deflator:
   path: data/raw/cpi.csv        # optional: columns state, sector, year, cpi (any base); nominal if absent

@@ -49,8 +49,11 @@ def read_round(name: str, rcfg: dict[str, Any], root: Path) -> pd.DataFrame:
         hh_layout = root / hh["layout"] if hh.get("layout") else None
         hraw = pd.concat([_read_file(root / f, hh.get("format", rcfg["format"]), hh_layout) for f in hh["files"]],
                          ignore_index=True)
-        keys = hh["keys"]
-        hraw = hraw[[*keys, *hh["columns"]]].drop_duplicates(keys)
+        # keys: list of names shared by both files, or {person column: household column}
+        keymap = hh["keys"] if isinstance(hh["keys"], dict) else {k: k for k in hh["keys"]}
+        keys = list(keymap)
+        hraw = hraw[[*keymap.values(), *hh["columns"]]].rename(columns={v: k for k, v in keymap.items()})
+        hraw = hraw.drop_duplicates(keys)
         clash = [c for c in hh["columns"] if c in raw.columns]
         raw = raw.drop(columns=clash).merge(hraw, on=keys, how="left", validate="many_to_one")
 
@@ -93,11 +96,14 @@ def harmonise(df: pd.DataFrame, cfg: dict[str, Any], cpi: pd.DataFrame | None = 
     h = pd.DataFrame(index=df.index)
     for c in ["round", "year", "occ_system", "state"]:
         h[c] = df[c]
-    for c in ["district", "fsu", "stratum", "hhid"]:
+    for c in ["fsu", "stratum", "hhid"]:
         if c in df:
             h[c] = df[c]
-    h["quarter"] = df["quarter"] if "quarter" in df else "1"
-    h["yq"] = h["year"].astype(str) + "Q" + h["quarter"].astype(str).str.strip()
+    if "district" in df:  # district codes repeat across states
+        h["district"] = df["state"].astype(str) + "-" + df["district"].astype(str)
+    quarter = df["quarter"].astype(str).str.extract(r"(\d)")[0] if "quarter" in df else "1"
+    h["quarter"] = quarter
+    h["yq"] = h["year"].astype(str) + "Q" + h["quarter"].astype(str)
 
     h["age"] = _num(df["age"])
     h["age2"] = h["age"] ** 2 / 100
@@ -124,7 +130,10 @@ def harmonise(df: pd.DataFrame, cfg: dict[str, Any], cpi: pd.DataFrame | None = 
     h["occ3"] = occ.str.zfill(3).str[:3]
     h["division"] = h["occ3"].str[0]
     h["occ_cluster"] = h["occ_system"] + ":" + h["occ3"]
-    h["nic2"] = df["nic"].astype(str).str.extract(r"(\d+)")[0].str.zfill(5).str[:2]
+    # CWS records a 2-digit NIC division; usual-status fields carry 5-digit codes
+    nic = df["nic"].astype(str).str.extract(r"(\d+)")[0]
+    h["nic2"] = np.where(nic.str.len() <= 2, nic.str.zfill(2), nic.str.zfill(5).str[:2])
+    h.loc[nic.isna(), "nic2"] = np.nan
 
     # formality (regular wage workers only; NaN for others)
     reg = h["emp_type"] == "regular"
@@ -146,12 +155,16 @@ def harmonise(df: pd.DataFrame, cfg: dict[str, Any], cpi: pd.DataFrame | None = 
     if "relation" in df:
         h["hh_head"] = _in(df["relation"], codes["relation"]["head"]).astype(int)
 
-    # weights
+    # weights (PLFS README): MULT/100 if NSS == NSC else MULT/200 for both sub-samples
+    # combined; for annual estimates divide by the number of quarters (No_Qtr)
     mult = _num(df["mult"])
-    if cfg["weights"]["rule"] == "plfs_standard" and {"nss", "nsc"} <= set(df.columns):
-        h["weight"] = np.where(_num(df["nss"]) == _num(df["nsc"]), mult / 100, mult / 200)
+    if {"nss", "nsc"} <= set(df.columns):
+        w = np.where(_num(df["nss"]) == _num(df["nsc"]), mult / 100, mult / 200)
     else:
-        h["weight"] = mult / 100
+        w = mult / 100
+    if cfg["weights"]["rule"] == "plfs_annual" and "no_qtr" in df:
+        w = w / _num(df["no_qtr"])
+    h["weight"] = w
 
     # earnings and hours
     hours = _num(df["hours"]) if "hours" in df else pd.Series(np.nan, index=df.index)
