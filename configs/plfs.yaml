@@ -19,12 +19,12 @@ rounds:
     year: 2017
     occ_system: nco2004
     format: csv
-    files: [data/raw/plfs/2017-18/data/hh_per_fv_2017-18.csv]
+    files: [data/raw/plfs/2017-18/data/per_fv_2017-18.csv]
     household:
-      files: [data/raw/plfs/2017-18/data/hhfv_2017-18.csv]
-      keys: {quarter_per_fv: qtr_hh_fv, fsu_per_fv: b1q1_hh_fv, b1q13_per_fv: b1q13_hh_fv, b1q14_per_fv: b1q14_hh_fv, b1q15_per_fv: b1q15_hh_fv}
-      columns: [b3q1_hh_fv, b3q2_hh_fv, b3q3_hh_fv, b3q4_hh_fv]   # hh size, hh type, religion, social group
-    columns:
+      files: [data/raw/plfs/2017-18/data/hh_fv_2017-18.csv]
+      keys: &hh_keys_fv {quarter_per_fv: qtr_hh_fv, fsu_per_fv: b1q1_hh_fv, b1q13_per_fv: b1q13_hh_fv, b1q14_per_fv: b1q14_hh_fv, b1q15_per_fv: b1q15_hh_fv}
+      columns: &hh_cols_fv [b3q1_hh_fv, b3q2_hh_fv, b3q3_hh_fv, b3q4_hh_fv]   # hh size, hh type, religion, social group
+    columns: &person_cols_2017   # same person-file columns in 2018-19
       quarter: quarter_per_fv
       visit: visit_per_fv
       sector: b1q3_per_fv
@@ -58,8 +58,32 @@ rounds:
       nss: NSS_per_fv
       nsc: NSC_per_fv
       no_qtr: No_qtr_per_fv
-  "2018-19": {year: 2018, occ_system: nco2004, format: csv, files: [data/raw/plfs/2018-19/person_fv.csv], columns: {}}
-  "2019-20": {year: 2019, occ_system: nco2004, format: csv, files: [data/raw/plfs/2019-20/person_fv.csv], columns: {}}
+  # 2018-19: person columns identical to 2017-18. The first-visit household file
+  # (records FVH1, visit V1) carries `_hh_rv` column suffixes in the MoSPI release.
+  "2018-19":
+    year: 2018
+    occ_system: nco2004
+    format: csv
+    files: [data/raw/plfs/2018-19/data/per_fv_2018-19.csv]
+    household:
+      files: [data/raw/plfs/2018-19/data/hh_fv_2018-19.csv]
+      keys: {quarter_per_fv: qtr_hh_rv, fsu_per_fv: b1q1_hh_rv, b1q13_per_fv: b1q13_hh_rv, b1q14_per_fv: b1q14_hh_rv, b1q15_per_fv: b1q15_hh_rv}
+      columns: [b3q1_hh_rv, b3q2_hh_rv, b3q3_hh_rv, b3q4_hh_rv]
+    columns:
+      <<: *person_cols_2017
+      religion: b3q3_hh_rv
+      social_group: b3q4_hh_rv
+  # 2019-20: person and household columns identical to 2017-18.
+  "2019-20":
+    year: 2019
+    occ_system: nco2004
+    format: csv
+    files: [data/raw/plfs/2019-20/data/per_fv_2019-20.csv]
+    household:
+      files: [data/raw/plfs/2019-20/data/hh_fv_2019-20.csv]
+      keys: *hh_keys_fv
+      columns: *hh_cols_fv
+    columns: *person_cols_2017
   "2020-21": {year: 2020, occ_system: nco2004, format: csv, files: [data/raw/plfs/2020-21/person_fv.csv], columns: {}}
   "2021-22": {year: 2021, occ_system: nco2015, format: csv, files: [data/raw/plfs/2021-22/person_fv.csv], columns: {}}
   "2022-23": {year: 2022, occ_system: nco2015, format: csv, files: [data/raw/plfs/2022-23/person_fv.csv], columns: {}}
