@@ -140,6 +140,23 @@ def test_household_file_merge(tmp_path):
     assert df["social_group"].tolist() == ["3", "3", "9"]
 
 
+def test_float_codes_and_temporary_visitors():
+    from dti.plfs import _code
+
+    assert _code(pd.Series(["611.0", "1.0", "", "45"]), 2).tolist()[:2] == ["611", "01"]
+    assert pd.isna(_code(pd.Series([""]))[0])
+
+    cfg = load_yaml(CONFIGS / "plfs.yaml")
+    df = pd.DataFrame({
+        "round": "r", "year": 2021, "occ_system": "nco2015", "state": ["1.0", "1.0"], "sector": "1",
+        "sex": "1", "age": "30", "cws_status": "31", "occ3": ["611.0", "611.0"], "nic": "1.0",
+        "gen_edu": "8", "mult": "1000", "quarter": "Q5", "person_serial": ["1", "81"],
+    })
+    h = harmonise(df, cfg)
+    assert len(h) == 1  # serial 81 = temporary visitor, dropped
+    assert h.iloc[0][["state", "occ3", "nic2", "yq"]].tolist() == ["01", "611", "01", "2021Q5"]
+
+
 def test_harmonise_and_merge(synthetic_panel):
     h = synthetic_panel
     assert set(h["occ_system"]) == {"nco2004", "nco2015"}

@@ -8,7 +8,7 @@
 #   optional: district, fsu, stratum, quarter, visit, nss, nsc, no_qtr, marital, social_group,
 #             religion, relation, hhid_parts (list), earn_regular, earn_casual, earn_self,
 #             hours (single column or list of daily columns to sum), contract, paid_leave,
-#             social_security
+#             social_security, person_serial
 # A list value for earn_* or hours means "sum these columns".
 
 rounds:
@@ -84,10 +84,89 @@ rounds:
       keys: *hh_keys_fv
       columns: *hh_cols_fv
     columns: *person_cols_2017
-  "2020-21": {year: 2020, occ_system: nco2004, format: csv, files: [data/raw/plfs/2020-21/person_fv.csv], columns: {}}
-  "2021-22": {year: 2021, occ_system: nco2015, format: csv, files: [data/raw/plfs/2021-22/person_fv.csv], columns: {}}
-  "2022-23": {year: 2022, occ_system: nco2015, format: csv, files: [data/raw/plfs/2022-23/person_fv.csv], columns: {}}
-  "2023-24": {year: 2023, occ_system: nco2015, format: csv, files: [data/raw/plfs/2023-24/person_fv.csv], columns: {}}
+  # 2020-21: new schedule (migration block 7), columns renamed to *_perv1 / *_hhv1;
+  # item positions unchanged. Occupation still NCO-2004. Quarters coded Q5-Q8.
+  # Person serial >= 81 = temporary visitor (dropped, see codes.temporary_visitor_serial_min).
+  "2020-21":
+    year: 2020
+    occ_system: nco2004
+    format: csv
+    files: [data/raw/plfs/2020-21/data/per_fv_2020-21.csv]
+    household:
+      files: [data/raw/plfs/2020-21/data/hh_fv_2020-21.csv]
+      keys: &hh_keys_v1 {qtr_perv1: qtr_hhv1, b1q1_perv1: b1q1_hhv1, b1q13_perv1: b1q13_hhv1, b1q14_perv1: b1q14_hhv1, b1q15_perv1: b1q15_hhv1}
+      columns: &hh_cols_v1 [b3q1_hhv1, b3q2_hhv1, b3q3_hhv1, b3q4_hhv1]
+    columns: &person_cols_2020
+      quarter: qtr_perv1
+      visit: visit_perv1
+      sector: b1q3_perv1
+      state: state_perv1
+      district: distcode_perv1
+      stratum: b1q5_perv1
+      fsu: b1q1_perv1
+      hhid_parts: [qtr_perv1, b1q1_perv1, b1q13_perv1, b1q14_perv1, b1q15_perv1]
+      person_serial: b4q1_perv1
+      relation: b4q4_perv1
+      sex: b4q5_perv1
+      age: b4q6_perv1
+      marital: b4q7_perv1
+      gen_edu: b4q8_perv1
+      religion: b3q3_hhv1
+      social_group: b3q4_hhv1
+      cws_status: b6q5_perv1
+      nic: b6q6_perv1
+      occ3: b6q7_perv1
+      earn_regular: b6q9_perv1
+      earn_self: b6q10_perv1
+      earn_casual: [b6q9_3pt1_perv1, b6q9_3pt2_perv1, b6q9_3pt3_perv1, b6q9_3pt4_perv1, b6q9_3pt5_perv1, b6q9_3pt6_perv1, b6q9_3pt7_perv1, b6q9_act2_3pt1_perv1, b6q9_act2_3pt2_perv1, b6q9_act2_3pt3_perv1, b6q9_act2_3pt4_perv1, b6q9_act2_3pt5_perv1, b6q9_act2_3pt6_perv1, b6q9_act2_3pt7_perv1]
+      hours: [b6q7_3pt1_perv1, b6q7_3pt2_perv1, b6q7_3pt3_perv1, b6q7_3pt4_perv1, b6q7_3pt5_perv1, b6q7_3pt6_perv1, b6q7_3pt7_perv1]
+      contract: b5pt1q11_perv1
+      paid_leave: b5pt1q12_perv1
+      social_security: b5pt1q13_perv1
+      mult: mult_perv1
+      nss: NSS_perv1
+      nsc: NSC_perv1
+      no_qtr: no_qtr_perv1
+  # 2021-22: first NCO-2015 round. Same *_perv1 naming as 2020-21, but block 5 has extra
+  # items (q14-q16) and the daily hours/wage columns of activities 1 and 2 carry swapped
+  # names in the release; earnings sum both activities, so the swap does not matter.
+  # Codes come as floats ('611.0'); the loader normalises them.
+  "2021-22":
+    year: 2021
+    occ_system: nco2015
+    format: csv
+    files: [data/raw/plfs/2021-22/data/per_fv_2021-22.csv]
+    household:
+      files: [data/raw/plfs/2021-22/data/hh_fv_2021-22.csv]
+      keys: *hh_keys_v1
+      columns: *hh_cols_v1
+    columns: &person_cols_2021
+      <<: *person_cols_2020
+      earn_casual: [b6q9_act1_3pt1_perv1, b6q9_3pt1_perv1, b6q9_act2_3pt2_perv1, b6q9_3pt2_perv1, b6q9_act2_3pt3_perv1, b6q9_3pt3_perv1, b6q9_act2_3pt4_perv1, b6q9_3pt4_perv1, b6q9_act2_3pt5_perv1, b6q9_3pt5_perv1, b6q9_act2_3pt6_perv1, b6q9_3pt6_perv1, b6q9_act2_3pt7_perv1, b6q9_3pt7_perv1]
+  # 2022-23: person columns named as in 2020-21 (no migration block). Quarters Q5-Q8.
+  # MoSPI note: one Assam village carries a very large (correct) multiplier; compare
+  # weighted and unweighted estimates for this round.
+  "2022-23":
+    year: 2022
+    occ_system: nco2015
+    format: csv
+    files: [data/raw/plfs/2022-23/data/per_fv_2022-23.csv]
+    household:
+      files: [data/raw/plfs/2022-23/data/hh_fv_2022-23.csv]
+      keys: *hh_keys_v1
+      columns: *hh_cols_v1
+    columns: *person_cols_2020
+  # 2023-24: identical file layout to 2022-23.
+  "2023-24":
+    year: 2023
+    occ_system: nco2015
+    format: csv
+    files: [data/raw/plfs/2023-24/data/per_fv_2023-24.csv]
+    household:
+      files: [data/raw/plfs/2023-24/data/hh_fv_2023-24.csv]
+      keys: *hh_keys_v1
+      columns: *hh_cols_v1
+    columns: *person_cols_2020
 
 # Supported formats: csv, tsv, parquet, dta, fwf. For fwf give `layout: <csv with name,start,width>`
 # (start is 1-based, as in the MoSPI data layout sheets).
@@ -130,6 +209,7 @@ codes:
   contract_written: [2, 3, 4]   # type of job contract: 1 = no written contract
   paid_leave_yes: [1]
   social_security_yes: [1, 2, 3, 4, 5, 6, 7]   # 8 = not eligible, 9 = don't know
+  temporary_visitor_serial_min: 81             # person serial >= 81: temporary visitor (2020-21 onward)
 
 weights:
   rule: plfs_annual             # (mult/100 if nss == nsc else mult/200) / no_qtr  — PLFS README; `plfs_quarterly` skips /no_qtr

@@ -35,6 +35,13 @@ def _read_file(path: Path, fmt: str, layout: Path | None) -> pd.DataFrame:
     raise ValueError(f"unknown format {fmt}")
 
 
+def _code(s: pd.Series, width: int | None = None) -> pd.Series:
+    """Normalise a code column: some releases store codes as floats ('611.0', '1.0')."""
+    out = s.astype(str).str.strip().str.replace(r"\.0+$", "", regex=True)
+    out = out.where(~out.isin(["", "nan", "None", "<NA>"]))
+    return out.str.zfill(width) if width else out
+
+
 def _num(s: pd.Series) -> pd.Series:
     return pd.to_numeric(s.astype(str).str.strip().replace({"": None, "nan": None}), errors="coerce")
 
@@ -53,6 +60,9 @@ def read_round(name: str, rcfg: dict[str, Any], root: Path) -> pd.DataFrame:
         keymap = hh["keys"] if isinstance(hh["keys"], dict) else {k: k for k in hh["keys"]}
         keys = list(keymap)
         hraw = hraw[[*keymap.values(), *hh["columns"]]].rename(columns={v: k for k, v in keymap.items()})
+        for k in keys:  # same key written as '15275' in one file and '15275.0' in the other
+            raw[k] = _code(raw[k])
+            hraw[k] = _code(hraw[k])
         hraw = hraw.drop_duplicates(keys)
         clash = [c for c in hh["columns"] if c in raw.columns]
         raw = raw.drop(columns=clash).merge(hraw, on=keys, how="left", validate="many_to_one")
@@ -93,14 +103,18 @@ def _category(s: pd.Series, mapping: dict[str, list[int]]) -> pd.Series:
 
 def harmonise(df: pd.DataFrame, cfg: dict[str, Any], cpi: pd.DataFrame | None = None) -> pd.DataFrame:
     codes, wcfg = cfg["codes"], cfg["wages"]
+    # from 2020-21, person serial numbers >= 81 are temporary visitors, not household members
+    if "person_serial" in df and codes.get("temporary_visitor_serial_min"):
+        df = df[~(_num(df["person_serial"]) >= codes["temporary_visitor_serial_min"])]
     h = pd.DataFrame(index=df.index)
-    for c in ["round", "year", "occ_system", "state"]:
+    for c in ["round", "year", "occ_system"]:
         h[c] = df[c]
+    h["state"] = _code(df["state"], 2)  # consistent across rounds ('1.0' -> '01')
     for c in ["fsu", "stratum", "hhid"]:
         if c in df:
             h[c] = df[c]
     if "district" in df:  # district codes repeat across states
-        h["district"] = df["state"].astype(str) + "-" + df["district"].astype(str)
+        h["district"] = h["state"] + "-" + _code(df["district"], 2)
     quarter = df["quarter"].astype(str).str.extract(r"(\d)")[0] if "quarter" in df else "1"
     h["quarter"] = quarter
     h["yq"] = h["year"].astype(str) + "Q" + h["quarter"].astype(str)
@@ -126,12 +140,12 @@ def harmonise(df: pd.DataFrame, cfg: dict[str, Any], cpi: pd.DataFrame | None = 
     h["wage_employed"] = h["emp_type"].isin(["regular", "casual"]).astype(int)
 
     # occupation and industry
-    occ = df["occ3"].astype(str).str.extract(r"(\d+)")[0]
+    occ = _code(df["occ3"]).str.extract(r"(\d+)")[0]
     h["occ3"] = occ.str.zfill(3).str[:3]
     h["division"] = h["occ3"].str[0]
     h["occ_cluster"] = h["occ_system"] + ":" + h["occ3"]
     # CWS records a 2-digit NIC division; usual-status fields carry 5-digit codes
-    nic = df["nic"].astype(str).str.extract(r"(\d+)")[0]
+    nic = _code(df["nic"]).str.extract(r"(\d+)")[0]
     h["nic2"] = np.where(nic.str.len() <= 2, nic.str.zfill(2), nic.str.zfill(5).str[:2])
     h.loc[nic.isna(), "nic2"] = np.nan
 

@@ -5,6 +5,7 @@ is one command. Steps 1–4 need a GPU, step 5 needs a browser download, steps 6
 PLFS. Steps already done in the repo are marked.
 
 Open decisions that change configs are in [decisions.md](decisions.md); check them first.
+PLFS data notes (rounds, quirks, weights): [PLFS_DATA_NOTES.md](PLFS_DATA_NOTES.md).
 
 ## 0. Setup
 
