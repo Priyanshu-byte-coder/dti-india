@@ -1,31 +1,37 @@
 # Runbook: from code to results
 
 For whoever runs the pipeline on the Nirma GPU and with the PLFS microdata. Every step
-is one command. Steps 1–4 need a GPU, step 5 needs a browser download, steps 6–8 need
-PLFS. Steps already done in the repo are marked.
+is one command. Steps 1–4 need a GPU, steps 6–8 need PLFS. Steps already done in the repo
+are marked.
 
 Open decisions that change configs are in [decisions.md](decisions.md); check them first.
+
+**Shortcut for the Nirma server:** [NIRMA_GPU_SSH.md](NIRMA_GPU_SSH.md) sets up SSH access
+so the GPU steps can be run and monitored remotely. Steps 0–5 then become
+`bash scripts/nirma_setup.sh` followed by `bash scripts/nirma_run.sh pilot | full | onet`,
+with `bash scripts/status.sh` for progress. The model pair is picked from the GPUs.
 
 ## 0. Setup
 
 ```bash
 git clone https://github.com/Priyanshu-byte-coder/dti-india.git && cd dti-india
 python -m venv .venv && source .venv/bin/activate
-pip install -e ".[dev,gpu]"          # GPU server; drop ",gpu" on a laptop
+pip install -e ".[dev,gpu]"          # GPU server; drop ",gpu" on a laptop. Python 3.10-3.12
 pytest                               # 32 tests, ~10 s
 huggingface-cli login                # only for gated models (Llama)
 ```
 
 ## 1. Choose models (needs GPU spec)
 
-Edit `configs/models.yaml`. Rough bf16 memory: 7–9B ≈ 18 GB, 27–32B ≈ 65 GB, 70B ≈ 140 GB.
-Use two model families (cross-model agreement is part of RQ1). Keep `runs: 5`.
+Decided (decisions.md, item 3): about 80 GB in total → `qwen32b` + `llama8b`; 24–79 GB →
+`qwen7b` + `llama8b`. `scripts/nirma_models.sh` applies the rule from `nvidia-smi`. Keep `runs: 5`.
 
 ## 2. Pilot: 50 occupations, then freeze the prompt
 
 ```bash
 # data/interim/pilot_50_seed0.csv is already in the repo
 bash scripts/run_scoring.sh qwen32b Qwen/Qwen2.5-32B-Instruct 8000 1 --sample data/interim/pilot_50_seed0.csv
+bash scripts/run_scoring.sh qwen32b Qwen/Qwen2.5-32B-Instruct 8000 1 --sample data/interim/pilot_50_seed0.csv --rubric configs/rubric_strict.yaml
 dti aggregate && dti reliability
 ```
 
@@ -38,8 +44,10 @@ Check:
 If the rubric or prompt changes, the prompt hash changes and outputs go to a new folder,
 so pilot and final runs never mix. Once satisfied, **do not change `configs/rubric.yaml`**.
 
-Decision pending (decisions.md, open item 1): strict text-only scoring may leave most
-occupations at 0. Show the pilot's score distribution to the professors.
+Decision (decisions.md, item 1, provisional): `rubric.yaml` v1.1 counts described tasks,
+`rubric_strict.yaml` counts only named digital work. The pilot runs both; show the two score
+distributions to the professors, then freeze one. Update the coder form's rule wording to
+match before it goes out.
 
 ## 3. Full NCO corpus (3,450 occupations × 5 runs × each model)
 
@@ -57,18 +65,18 @@ Interrupted? Run the same command again; only missing (occupation, run) pairs ar
 ## 4. O*NET corpus with the same prompt (RQ2)
 
 ```bash
-dti onet-download                    # O*NET 31.0 + taxonomy crosswalk (also prints step 5)
-dti onet-build                       # -> data/interim/onet_corpus.csv (923 occupations)
+# already done: raw O*NET 31.0 files are in data/raw/onet/, corpus in data/interim/
+dti onet-build                       # rebuilds data/interim/onet_corpus.csv (923 occupations)
 bash scripts/run_scoring.sh qwen32b Qwen/Qwen2.5-32B-Instruct 8000 2 --corpus onet
 dti aggregate --corpus onet
 ```
 
-## 5. BLS files (browser download — bls.gov blocks scripts)
+## 5. BLS files (done — in the repo)
 
-Save as:
-- `data/raw/bls/ISCO_SOC_Crosswalk.xls` from https://www.bls.gov/soc/ISCO_SOC_Crosswalk.xls
-- `data/raw/bls/oews_national.xlsx`: the "National" XLSX from https://www.bls.gov/oes/tables.htm
-  (latest May release; the file inside the zip named `national_M20xx_dl.xlsx`)
+`data/raw/bls/ISCO_SOC_Crosswalk.xls` (https://www.bls.gov/soc/ISCO_SOC_Crosswalk.xls) and
+`data/raw/bls/oews_national.xlsx` (May 2025 national file from https://www.bls.gov/oes/tables.htm,
+`national_M2025_dl.xlsx`). To update, download in a browser (bls.gov blocks scripts).
+`data/interim/onet_to_isco08.csv` is already built: 910 O\*NET occupations → 419 ISCO-08 groups.
 
 ```bash
 dti onet-build                       # now also writes ISCO-08 aggregates, weighted by US employment
@@ -76,7 +84,8 @@ dti aggregate --corpus onet
 dti gap --model qwen32b              # -> reports/gap/
 ```
 
-Check `reports/gap/unmatched_codes.json`: NCO-2015 families with no ISCO-08 match.
+Check `reports/gap/unmatched_codes.json`: NCO-2015 families with no ISCO-08 match. A dry run
+found 13 of 373: 1111, 3127, 3212, 3323, 3511, 4213, 6116, 7419, 8155, 8159, 8219, 9510, 9613.
 
 ## 6. Human coders (RQ1)
 
