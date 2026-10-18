@@ -4,7 +4,7 @@
 # Any change here changes the prompt hash, so LLM outputs from different rubric
 # versions are never mixed.
 
-version: "1.0"
+version: "1.1"   # described-task reading of "text only" (decisions.md, item 1); named-only variant: rubric_strict.yaml
 
 scale:
   0: "None: not mentioned and not needed to do the job."
@@ -14,8 +14,8 @@ scale:
   4: "Core / specialist: this digital activity is the main work of the occupation."
 
 rules:
-  - "Score only from the occupation text you are given (title and description). Do not score from what you think the job should involve or from what a particular employer does. Q11 is the only place for general knowledge."
-  - "If the text says nothing about a dimension, score 0. Do not guess."
+  - "Score only the tasks in the occupation text you are given (title and description). Do not add tasks the text does not mention, and do not score from what a particular employer does. Q11 is the only place for general knowledge about the occupation."
+  - "A task counts when the text names digital work (computer, software, e-mail, CNC, ...) OR describes a task that the typical worker in India normally does with digital tools (e.g. maintains accounts, prepares statements, records data, designs drawings). Quote the task words from the text as evidence. If the text neither names nor describes such a task for a dimension, score 0. Do not guess."
   - "Score the typical worker in the occupation, not the most advanced or most modern one."
   - "Score each dimension separately. A high score on one dimension does not imply high scores on the others."
   - "Plain voice phone calls do not count as digital. Messaging, e-mail, apps and video calls do."

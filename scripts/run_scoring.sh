@@ -28,7 +28,8 @@ vllm serve "${HF_MODEL}" \
   --seed 0 \
   > "${LOG}" 2>&1 &
 SERVER_PID=$!
-trap 'kill ${SERVER_PID} 2>/dev/null || true' EXIT
+# wait for vLLM to exit so its GPU memory is free before the next model starts
+trap 'kill ${SERVER_PID} 2>/dev/null; wait ${SERVER_PID} 2>/dev/null || true' EXIT
 
 for _ in $(seq 1 180); do
   if curl -sf "http://localhost:${PORT}/v1/models" > /dev/null; then break; fi

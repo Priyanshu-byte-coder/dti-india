@@ -91,7 +91,7 @@ def cmd_pilot(args) -> None:
 def cmd_prompt(args) -> None:
     from .prompt import build_messages, prompt_version
 
-    rubric = C.load_rubric()
+    rubric = C.load_rubric(Path(args.rubric) if args.rubric else None)
     row = _corpus(args).iloc[0]
     print(f"# prompt version {prompt_version(rubric)}\n")
     for m in build_messages(rubric, row["title"], row["description"]):
@@ -105,7 +105,7 @@ def cmd_score(args) -> None:
     for key in ("runs", "temperature", "concurrency", "base_url"):
         if getattr(args, key, None) is not None:
             settings[key] = getattr(args, key)
-    asyncio.run(score_corpus(_corpus(args), settings, C.load_rubric(), corpus_name=args.corpus, runs=settings["runs"]))
+    asyncio.run(score_corpus(_corpus(args), settings, C.load_rubric(Path(args.rubric) if args.rubric else None), corpus_name=args.corpus, runs=settings["runs"]))
 
 
 # --- aggregation ------------------------------------------------------------------------------
@@ -406,6 +406,7 @@ def main(argv: list[str] | None = None) -> None:
         sp.add_argument("--pilot", type=int, help="draw a stratified NCO sample of this size on the fly")
         sp.add_argument("--seed", type=int, default=0)
         sp.add_argument("--limit", type=int, help="first N occupations only (smoke test)")
+        sp.add_argument("--rubric", help="rubric YAML (default configs/rubric.yaml; configs/rubric_strict.yaml = named-only variant)")
 
     s = sub.add_parser("prompt", help="print the exact messages sent for one occupation")
     selection(s)

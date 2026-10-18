@@ -37,7 +37,30 @@ each group rests on direct links; a robustness check can keep direct links only.
 To verify on the PLFS side once data is in: every NCO-2004 3-digit code observed in
 PLFS 2017-18 to 2020-21 should appear in `dti_group3_nco2004.csv`.
 
-## Open — needs professors' input
+## Provisional decisions on the open items (2026-10-18)
+
+Taken to unblock the pilot, pending the professors' confirmation. Rule used for each:
+pick the **weakest** hypothesis, the one that adds the fewest constraints and still
+fits what is known, rather than the simplest or most restrictive one (Bennett 2023,
+"The Optimal Choice of Hypothesis Is the Weakest, Not the Shortest"). In practice that
+means: do not rule out readings the professors have not ruled out, keep information
+rather than drop it, and keep reversible choices reversible.
+
+| Item | Decision | Why it is the weaker choice | Effect in code |
+|---|---|---|---|
+| 1. Text only | **(b) described tasks** is the main rubric (v1.1); **(a) named only** is kept as a robustness variant, and the pilot runs both. | (a) adds a constraint (digital work must be named) that the text cannot show is false; (b) admits it as one case. Both still need a quote from the NCO text, so no outside sources come in. | `configs/rubric.yaml` (v1.1, rules 1–2), `configs/rubric_strict.yaml` (v1.0-strict), `dti score --rubric` |
+| 2. Q11 | **Keep** for coders and LLM. | Dropping it removes data; keeping it does not touch the DTI. | none |
+| 3. Models | Two families, sized to the GPU: ≥ 80 GB → `qwen32b` + `llama8b`; 24–79 GB → `qwen7b` + `llama8b`. | Assumes nothing about the unknown GPU spec beyond 24 GB. | `configs/models.yaml` |
+| 4. Temperature | **Keep 0.7.** | Temperature 0 would build in agreement between runs; 0.7 lets stability be tested, not assumed. | `configs/models.yaml` |
+| 5. NCO-2004 link | **Accept the sibling-mode rule**; the direct-links-only robustness check stays. | Uses every occupation; the direct-only check shows what depends on the imputed links. Replace it if an official concordance turns up. | `src/dti/crosswalk.py` |
+| 6. Wage-model choices | **Keep the plan defaults** in `configs/analysis.yaml`, with alternatives in `robustness.csv`. | No specification is ruled in by dropping the others. | `configs/analysis.yaml` (still marked OPEN) |
+| 7. Pooling | **Pool, standardise across all workers**, and rerun each NCO system separately. | Same reason as 6. | `robustness.csv` |
+
+Consequence to flag: the human coder form (`forms/DTI_Coder_Form_NCO2015.xlsx`) still
+carries the v1.0 rule 2 wording. Update it to v1.1 before it goes to coders, or the coders
+and the LLM will apply different rules.
+
+## Open — needs professors' input (provisional answers above)
 
 1. **Digital vocabulary in NCO text is sparse.** Only 5.7% of the 3,450 descriptions use
    any core digital term (computer, software, internet, online, e-mail, programming,

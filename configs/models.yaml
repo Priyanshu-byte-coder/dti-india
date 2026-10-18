@@ -1,11 +1,14 @@
 # LLM scoring configuration.
 #
 # Every model is reached through an OpenAI-compatible chat endpoint. On the Nirma
-# GPU server, start one with `scripts/serve_vllm.sh <hf-model-id>` (vLLM), then
-# point base_url at it. Hosted APIs work the same way (set base_url + api_key_env).
+# GPU server, `scripts/run_scoring.sh` starts vLLM, scores, and stops it. Hosted APIs
+# work the same way (set base_url + api_key_env).
 #
-# Model choice is open until the GPU spec is known. Rough bf16 memory needs:
-#   7-9B ~ 18 GB, 27-32B ~ 65 GB, 70B ~ 140 GB (or ~40 GB with AWQ 4-bit).
+# Rough bf16 memory needs: 7-9B ~ 18 GB, 27-32B ~ 65 GB, 70B ~ 140 GB.
+# Choice (decisions.md, item 3), by total GPU memory on the Nirma server:
+#   >= 80 GB : qwen32b + llama8b   (main pair)
+#   24-79 GB : qwen7b  + llama8b   (one model at a time; same two families)
+# Two families either way, so cross-model agreement (RQ1) is always available.
 # The abstract asks for intra-model stability; the plan adds a second model
 # family for cross-model agreement.
 
@@ -24,7 +27,12 @@ models:
     base_url: http://localhost:8000/v1
     api_key_env: VLLM_API_KEY
 
-  llama8b:
+  qwen7b:
+    model: Qwen/Qwen2.5-7B-Instruct
+    base_url: http://localhost:8002/v1
+    api_key_env: VLLM_API_KEY
+
+  llama8b:     # gated: accept the licence on huggingface.co, then `huggingface-cli login`
     model: meta-llama/Llama-3.1-8B-Instruct
     base_url: http://localhost:8001/v1
     api_key_env: VLLM_API_KEY
