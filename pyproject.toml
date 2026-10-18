@@ -1,0 +1,34 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dti-india"
+version = "0.1.0"
+description = "Digital Task Intensity of Indian occupations from NCO-2015 text with LLMs, linked to PLFS"
+requires-python = ">=3.10"
+dependencies = [
+    "pandas>=2.1",
+    "numpy>=1.26",
+    "openpyxl>=3.1",
+    "pyyaml>=6.0",
+    "pydantic>=2.5",
+    "openai>=1.40",
+    "scipy>=1.11",
+    "scikit-learn>=1.3",
+    "krippendorff>=0.6",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+gpu = ["vllm"]
+
+[project.scripts]
+dti = "dti.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]

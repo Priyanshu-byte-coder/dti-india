@@ -1,0 +1,26 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+.env
+
+# Model caches and logs
+.hf_cache/
+logs/
+
+# Generated outputs (reproducible from code + corpus; large)
+data/llm/
+data/processed/
+reports/
+
+# Filled human coder forms: personal data of coders, shared privately
+data/human/
+
+# PLFS microdata: MoSPI terms do not allow redistribution
+data/raw/
+
+# Excel lock files
+~$*.xlsx

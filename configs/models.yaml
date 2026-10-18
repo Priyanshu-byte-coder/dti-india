@@ -1,0 +1,36 @@
+# LLM scoring configuration.
+#
+# Every model is reached through an OpenAI-compatible chat endpoint. On the Nirma
+# GPU server, start one with `scripts/serve_vllm.sh <hf-model-id>` (vLLM), then
+# point base_url at it. Hosted APIs work the same way (set base_url + api_key_env).
+#
+# Model choice is open until the GPU spec is known. Rough bf16 memory needs:
+#   7-9B ~ 18 GB, 27-32B ~ 65 GB, 70B ~ 140 GB (or ~40 GB with AWQ 4-bit).
+# The abstract asks for intra-model stability; the plan adds a second model
+# family for cross-model agreement.
+
+defaults:
+  runs: 5                 # repeated scoring runs per occupation (seeds 0..runs-1)
+  temperature: 0.7        # >0 so repeated runs can disagree; see README "Stability runs"
+  top_p: 0.95
+  max_tokens: 1500
+  concurrency: 16         # parallel requests to the endpoint
+  max_attempts: 3         # retries on API / JSON / validation errors
+  structured_output: json_schema   # json_schema | json_object | none
+
+models:
+  qwen32b:
+    model: Qwen/Qwen2.5-32B-Instruct
+    base_url: http://localhost:8000/v1
+    api_key_env: VLLM_API_KEY
+
+  llama8b:
+    model: meta-llama/Llama-3.1-8B-Instruct
+    base_url: http://localhost:8001/v1
+    api_key_env: VLLM_API_KEY
+
+  # Deterministic keyword stand-in for testing the pipeline without a GPU.
+  # Never use its output as research data.
+  mock:
+    backend: mock
+    model: keyword-mock

@@ -1,0 +1,105 @@
+# Digital Task Intensity (DTI) coding rubric.
+# Single source of truth: the LLM prompt is generated from this file, and the
+# human coder form (forms/DTI_Coder_Form_NCO2015.xlsx) carries the same text.
+# Any change here changes the prompt hash, so LLM outputs from different rubric
+# versions are never mixed.
+
+version: "1.0"
+
+scale:
+  0: "None: not mentioned and not needed to do the job."
+  1: "Incidental: occasional, simple use. The job can be done without it."
+  2: "Regular, basic: used routinely as part of the job, with standard tools."
+  3: "Regular, advanced: frequent use of complex or job-specific digital tools."
+  4: "Core / specialist: this digital activity is the main work of the occupation."
+
+rules:
+  - "Score only from the occupation text you are given (title and description). Do not score from what you think the job should involve or from what a particular employer does. Q11 is the only place for general knowledge."
+  - "If the text says nothing about a dimension, score 0. Do not guess."
+  - "Score the typical worker in the occupation, not the most advanced or most modern one."
+  - "Score each dimension separately. A high score on one dimension does not imply high scores on the others."
+  - "Plain voice phone calls do not count as digital. Messaging, e-mail, apps and video calls do."
+  - "When unsure between two scores, compare with the anchor examples and pick the closer one; note the doubt in Q12."
+
+dimensions:
+  - id: D1
+    question: Q2
+    name: "Basic digital operation"
+    definition: "Routine use of computers, mobile phones, tablets, POS or billing machines, and standard software (word processing, spreadsheets, data-entry screens)."
+    anchors:
+      0: "No device use described (e.g. manual field or construction labour)."
+      1: "Occasional simple use (e.g. shop salesperson who sometimes uses a billing machine)."
+      2: "Daily use of standard tools (e.g. office clerk entering records)."
+      3: "Heavy use of several standard applications through most of the day (e.g. bank teller working in core banking software)."
+      4: "Operating the computer is the job (e.g. computer or data-entry operator)."
+  - id: D2
+    question: Q3
+    name: "Digital information processing"
+    definition: "Searching, recording, managing, interpreting or analysing information in digital form."
+    anchors:
+      0: "No digital information handled."
+      1: "Occasionally looks up information online or on a system."
+      2: "Keeps digital records or registers (e.g. stock records in accounting software)."
+      3: "Prepares reports or analysis from digital data or databases (e.g. accountant)."
+      4: "Analysing digital data is the main work (e.g. statistician, data analyst)."
+  - id: D3
+    question: Q4
+    name: "Digital communication and collaboration"
+    definition: "E-mail, messaging, video calls, and working through digital platforms: CRM, ticketing, e-commerce or gig apps, government portals (e.g. GeM). Plain voice calls do not count."
+    anchors:
+      0: "No digital communication (face-to-face or voice calls only)."
+      1: "Occasional messages (e.g. WhatsApp or SMS with a supervisor)."
+      2: "Regular e-mail or messaging with clients or colleagues."
+      3: "Work is organised through a platform (e.g. CRM, delivery or booking app, procurement portal)."
+      4: "The role is digital interaction (e.g. online customer support, social media manager)."
+  - id: D4
+    question: Q5
+    name: "Advanced or specialised digital tools"
+    definition: "Occupation-specific software, programming, CAD, GIS, analytics tools, and computer-controlled machines or systems (CNC, PLC, medical imaging, automated plant controls)."
+    anchors:
+      0: "No specialised digital tools."
+      1: "Operates equipment with simple digital controls (e.g. a machine with a digital display and preset buttons)."
+      2: "Routinely uses one specialised software or runs preset programs (e.g. hospital records system, preset CNC program)."
+      3: "Sets up, configures or programs specialised tools (e.g. CAD drafting, CNC programming, GIS mapping)."
+      4: "Builds or maintains such systems (e.g. software developer, systems or network engineer)."
+  - id: D5
+    question: Q6
+    name: "Digital problem solving and content creation"
+    definition: "Using digital technology to create content (documents, designs, video, code, models) or to solve non-routine problems."
+    anchors:
+      0: "No digital content or problem solving."
+      1: "Makes simple digital documents (e.g. typing a letter or a basic list)."
+      2: "Produces routine digital content from templates (reports, slides, posters)."
+      3: "Creates original digital content or solves non-routine problems with digital tools (e.g. graphic designer, IT support technician)."
+      4: "Creating digital products or solutions is the core work (e.g. software architect, animator, data scientist)."
+
+other_questions:
+  q1_detail: "Q1. Is the description detailed enough to judge digital tasks? Yes / Partly / No."
+  evidence: "Q7. For each dimension scored 1 or more, copy the exact words from the description that support the score. Leave empty for a score of 0."
+  confidence: "Q8. Confidence in each dimension score: 1 = low, 2 = medium, 3 = high."
+  q9_overall: "Q9. Overall, how digital is this occupation, from 0 (not at all) to 10 (entirely digital)? Give a holistic judgement; do not add up the five scores."
+  q10_core: "Q10. Is digital work Core to the job, a Supporting tool, or Not relevant?"
+  q11_india_today: "Q11. From general knowledge: in India today, is this occupation More digital than the text suggests, the Same, or Less?"
+  q12_comment: "Q12. Anything unclear or not fitting the rules? Short comment, or empty."
+
+# Worked example shown to coders and given to the LLM as a one-shot example.
+# Illustrative text, not an actual NCO entry.
+worked_example:
+  title: "Accounts Clerk"
+  description: "Records financial transactions in ledgers and accounting software; prepares vouchers, invoices and bank reconciliation statements; maintains digital files of bills and receipts; corresponds with vendors by e-mail regarding payments; prints and files monthly summary reports."
+  coding:
+    q1_detail: "Yes"
+    dimensions:
+      D1: {rationale: "Daily use of accounting software and digital files; standard use, not the whole job.", evidence: "accounting software", score: 2, confidence: 3}
+      D2: {rationale: "Prepares statements and reports from digital records.", evidence: "bank reconciliation statements", score: 3, confidence: 3}
+      D3: {rationale: "Regular e-mail with vendors.", evidence: "by e-mail", score: 2, confidence: 3}
+      D4: {rationale: "One specialised package used routinely.", evidence: "accounting software", score: 2, confidence: 2}
+      D5: {rationale: "Simple documents only, no original content.", evidence: "prepares vouchers, invoices", score: 1, confidence: 2}
+    q9_overall: 5
+    q10_core: "Supporting"
+    q11_india_today: "More"
+    q12_comment: ""
+
+# Aggregation of the five dimensions into the DTI (abstract: equal weights by default).
+aggregation:
+  weights: {D1: 0.2, D2: 0.2, D3: 0.2, D4: 0.2, D5: 0.2}
