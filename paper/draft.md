@@ -132,11 +132,29 @@ Unconditional quantile (RIF) regressions (Firpo, Fortin and Lemieux, 2009) and c
 
 ### 6.3 The conditional digital occupational premium (RQ3)
 
-<!-- RESULTS:RQ3 -->
+**[PRELIMINARY — O\*NET-transferred DTI.]** The estimates in 6.3–6.4 use the O\*NET-transferred measure (Muro-type computer importance × level, mapped to NCO families; Section 4.6). They will be re-estimated with the NCO-LLM DTI **[PENDING-LLM]** and then reported side by side, which is itself the RQ2 comparison applied to wages. Tables are in `paper/tables_onet.md` (generated from `reports/econ_onet/`).
+
+The sample comprises 465,826 regular and casual wage earners aged 15–64 in seven PLFS rounds, in 230 occupation groups (109 NCO-2004 and 121 NCO-2015 groups; Table 1). Without controls, a one-standard-deviation higher occupational DTI is associated with 30.4 log points higher hourly wages (Table 2, M1). Individual characteristics absorb most of this (M2: 11.2), state and industry fixed effects little more (M3: 10.7), and comparing occupations within the same broad occupational division halves it again: in the preferred specification the conditional premium is **5.7 log points** (SE 1.5, M4). The estimate is stable to unweighted estimation (6.4) and to the wild cluster bootstrap (p = 0.001), is larger for monthly earnings (8.4), and is similar in the NCO-2004 (6.4) and NCO-2015 (4.4) rounds and when only directly linked NCO-2004 groups are used (5.5; Table 4). Correcting for selection into wage employment leaves it unchanged (5.7; Table 5).
+
+Two results qualify the average. First, the premium is non-linear: relative to the least digital fifth of occupations, only the most digital fifth earns significantly more (13.5 log points; the second to fourth quintiles are within 0–4 points and not significant). Second, coefficient stability is weak: moving from M1 to M4 raises R² from 0.28 to 0.57 while the coefficient falls by four-fifths, so by Oster's (2019) criterion selection on unobservables only 0.40 times as strong as selection on observables would be enough to remove it (Table 3). This is consistent with our interpretation of β as a **conditional occupational association rather than a causal return** to digital skills, and with substantial sorting of more able workers into digitally intensive occupations. Among regular wage workers the premium is 5.0; among casual workers it is zero (0.9, SE 1.8).
 
 ### 6.4 Heterogeneity (RQ4)
 
-<!-- RESULTS:RQ4 -->
+**[PRELIMINARY — O\*NET-transferred DTI.]**
+
+*Across the wage distribution.* The premium rises steeply with the wage level: unconditional quantile estimates are 1.6 and 1.8 log points (not significant) at the 10th and 25th percentiles, 3.6 at the median, 7.8 at the 75th and 19.8 at the 90th percentile; conditional quantile estimates show the same gradient (2.6 to 12.1; Table 6). Occupational digital intensity is associated with higher pay mainly at the top of the distribution.
+
+*Education.* The clearest dividing line is education. Estimated separately, the premium is zero for workers with at most primary education (−0.4), 4.8 for those with middle or secondary schooling and 7.3 for tertiary graduates (Table 9). The interaction estimates are larger and, importantly, survive full three-digit occupation fixed effects (relative to up-to-primary: +8.9 for middle/secondary and +18.0 for tertiary; Table 8): within the same occupation, more educated workers gain more from its digital intensity. The machine-learning estimates agree (best linear projection +5.1 and +9.4; group effects −1.3, 2.4 and 6.5; Table 10).
+
+*Formality.* Among regular wage workers, the premium is zero for those without social-security coverage (−0.3) and 5.6 for those with it; the interaction is 11.0 within occupations (Table 8). Casual workers show no premium in any specification.
+
+*Gender.* Women earn a larger premium than men: 8.6 against 3.5 when estimated separately, 8.3 against 3.5 after correcting for selection into wage employment, and a positive within-occupation interaction (+3.2). The machine-learning group effects are 8.6 and 2.2. This mirrors the larger returns to digital skills for women found in Egypt (Sami, 2026). Occupational DTI, however, accounts for essentially none of the 31.7 log-point gender wage gap in the Oaxaca–Blinder decomposition (−0.1 points; Table 7); most of the gap (27.6 points) is unexplained by the characteristics included.
+
+*Age.* The premium increases with age (2.6 for 15–24 to 8.3 for 45–54), suggesting that the returns to working in digitally intensive occupations accumulate with experience.
+
+*Rural–urban.* The evidence is mixed. Within occupations and holding other interactions fixed, the premium is 3.4 points lower for rural workers; estimated separately, and in the machine-learning group effects, it is higher for rural workers (7.8 vs 4.0; 4.9 vs 3.0). The difference comes from how the other characteristics are allowed to vary and will be examined further with the final index.
+
+*Summary.* With the O\*NET-transferred measure, the conditional digital occupational premium is modest on average, concentrated at the top of the wage distribution, and absent for workers with little education, in informal regular jobs and in casual work. In the language of the abstract, this points to a **digital-returns gap** in addition to any digital-skills gap. **[To be confirmed with the NCO-LLM DTI.]**
 
 ## 7. Discussion and policy relevance
 
