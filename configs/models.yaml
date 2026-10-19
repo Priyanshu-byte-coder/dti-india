@@ -37,6 +37,21 @@ models:
     base_url: http://localhost:8001/v1
     api_key_env: VLLM_API_KEY
 
+  # PARAM Shavak (Nirma): one Quadro GP100, 16 GB, Pascal. vLLM does not support it, so
+  # models run as quantised GGUF files under llama.cpp (scripts/shavak_score.sh), one at
+  # a time. Two families as above; base_url/concurrency are set by the script.
+  qwen14b:
+    model: qwen2.5-14b-instruct-q4_k_m
+    base_url: http://127.0.0.1:8090/v1
+    concurrency: 4
+    gguf: {repo: bartowski/Qwen2.5-14B-Instruct-GGUF, file: Qwen2.5-14B-Instruct-Q4_K_M.gguf}   # 9.0 GB
+
+  llama8b_gguf:   # Llama 3.1 Community Licence applies (same terms as the gated meta-llama repo)
+    model: llama-3.1-8b-instruct-q8_0
+    base_url: http://127.0.0.1:8090/v1
+    concurrency: 4
+    gguf: {repo: bartowski/Meta-Llama-3.1-8B-Instruct-GGUF, file: Meta-Llama-3.1-8B-Instruct-Q8_0.gguf}   # 8.5 GB
+
   # Deterministic keyword stand-in for testing the pipeline without a GPU.
   # Never use its output as research data.
   mock:

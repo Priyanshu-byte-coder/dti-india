@@ -1,0 +1,38 @@
+#!/usr/bin/env bash
+# PBS/TORQUE job for PARAM Shavak (queue `batch`). Runs one scoring stage.
+#   qsub -v STAGE=pilot scripts/shavak.pbs
+#   qsub -v STAGE=full,MODEL=qwen14b scripts/shavak.pbs
+#   qsub -v STAGE=onet,MODEL=qwen14b scripts/shavak.pbs
+# Check: qstat -a ; output in logs/pbs_<jobid>.out
+#PBS -N dti-score
+#PBS -q batch
+#PBS -l nodes=1:ppn=8
+#PBS -l walltime=240:00:00
+#PBS -j oe
+
+set -euo pipefail
+cd "${PBS_O_WORKDIR:-$(cd "$(dirname "$0")/.." && pwd)}"
+mkdir -p logs
+exec > "logs/pbs_${PBS_JOBID:-manual}.out" 2>&1
+
+source /opt/anaconda3/etc/profile.d/conda.sh
+conda activate "${DTI_ENV:-$HOME/priyanshu/dti-env}"
+STAGE=${STAGE:-pilot}
+PILOT=data/interim/pilot_50_seed0.csv
+echo "== ${STAGE} start $(date -Is) on $(hostname)"
+
+case "$STAGE" in
+  pilot)
+    for m in ${MODELS:-qwen14b llama8b_gguf}; do
+      for r in configs/rubric.yaml configs/rubric_strict.yaml; do
+        bash scripts/shavak_score.sh "$m" --sample "$PILOT" --rubric "$r"
+      done
+    done
+    dti aggregate && dti reliability ;;
+  full)
+    bash scripts/shavak_score.sh "${MODEL:?set MODEL}" --rubric "${RUBRIC:-configs/rubric.yaml}" ;;
+  onet)
+    bash scripts/shavak_score.sh "${MODEL:?set MODEL}" --corpus onet --rubric "${RUBRIC:-configs/rubric.yaml}" ;;
+  *) echo "unknown STAGE ${STAGE}"; exit 1 ;;
+esac
+echo "== ${STAGE} finished $(date -Is)"
