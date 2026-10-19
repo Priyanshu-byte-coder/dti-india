@@ -65,8 +65,8 @@ def consensus(runs: pd.DataFrame, key: str = "nco2015") -> pd.DataFrame:
         out[d] = g[d].median()
         out[f"{d}_sd"] = g[d].std(ddof=0)
         out[f"{d}_conf"] = g[f"{d}_conf"].mean()
-        # share of runs whose evidence quote was not found in the text (score > 0 only)
-        bad = runs[d].gt(0) & runs[f"{d}_evidence"].isin(["not_found", "partial"])
+        # share of runs with a score > 0 whose evidence is missing or not found in the text
+        bad = runs[d].gt(0) & runs[f"{d}_evidence"].isin(["not_found", "partial", "empty"])
         out[f"{d}_ungrounded"] = bad.groupby([runs[k] for k in keys]).mean()
     out["q9_overall"] = g["q9_overall"].median()
     for col in CATEGORICAL:
