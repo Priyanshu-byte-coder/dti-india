@@ -84,13 +84,16 @@ def unstable_occupations(cons: pd.DataFrame, sd_threshold: float = 0.5) -> pd.Da
 
 
 def cross_model(cons: pd.DataFrame, key: str = "nco2015") -> pd.DataFrame:
+    """Agreement between models, separately for each prompt (rubric) version."""
     rows = []
-    models = sorted(cons["model_name"].unique())
-    for m1, m2 in combinations(models, 2):
-        a = cons[cons["model_name"] == m1].set_index(key)
-        b = cons[cons["model_name"] == m2].set_index(key)
-        for col in [*DIMENSIONS, "q9_overall"]:
-            rows.append({"model_a": m1, "model_b": m2, "item": col, **pairwise(a[col], b[col])})
+    for version, gv in cons.groupby("prompt_version"):
+        models = sorted(gv["model_name"].unique())
+        for m1, m2 in combinations(models, 2):
+            a = gv[gv["model_name"] == m1].set_index(key)
+            b = gv[gv["model_name"] == m2].set_index(key)
+            for col in [*DIMENSIONS, "q9_overall"]:
+                rows.append({"prompt_version": version, "model_a": m1, "model_b": m2, "item": col,
+                             **pairwise(a[col], b[col].reindex(a.index))})
     return pd.DataFrame(rows)
 
 

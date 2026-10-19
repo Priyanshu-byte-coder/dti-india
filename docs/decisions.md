@@ -60,6 +60,31 @@ Consequence to flag: the human coder form (`forms/DTI_Coder_Form_NCO2015.xlsx`) 
 carries the v1.0 rule 2 wording. Update it to v1.1 before it goes to coders, or the coders
 and the LLM will apply different rules.
 
+## Pilot results and revised decisions (2026-10-20)
+
+Pilot: 50 occupations (division-stratified, `data/interim/pilot_50_seed0.csv`) × 5 runs ×
+2 rubric readings × 2 models on PARAM Shavak (Quadro GP100, llama.cpp, GGUF models).
+Full table: `reports/pilot_comparison.csv`, `reports/pilot_agreement.csv` (server and
+Priyanshu's laptop; not in git).
+
+| Model / rubric | All-zero occupations | Run stability ICC (median dim.) | Non-zero scores grounded in text | Spearman with O\*NET (Muro) |
+|---|---|---|---|---|
+| qwen14b, strict (v1.0) | 50% | 0.81 | 89% | 0.59 |
+| qwen14b, described-task (v1.1) | 48% | 0.78 | 89% | 0.46 |
+| llama8b_gguf, strict | 62% | 0.68 | 73% | 0.42 |
+| llama8b_gguf, described-task | 64% | 0.63 | 78% | 0.50 |
+
+Cross-model agreement (mean score, rank correlation / weighted κ on rounded score):
+strict 0.77 / 0.83, described-task 0.80 / 0.69. Strict vs described within a model:
+0.86 (qwen14b), 0.81 (llama8b_gguf).
+
+| Item | Decision | Reason |
+|---|---|---|
+| 1. Text only | **Strict reading (v1.0, `configs/rubric_strict.yaml`) is the main DTI**; described-task (v1.1) is a robustness variant. Supersedes the provisional choice above. | The described-task reading barely reduces the all-zero share (48% vs 50%) but lowers cross-model agreement (κ 0.69 vs 0.83) and correspondence with O\*NET. Strict is also the professors' literal answer ("no external sources") and is the rubric on the human coder form, so the human validation stays comparable. |
+| 3. Models | **qwen14b (Qwen2.5-14B-Instruct, Q4_K_M) primary; llama8b_gguf (Llama-3.1-8B-Instruct, Q8_0) second family.** | PARAM Shavak has one 16 GB Pascal GPU: vLLM and the 32B model are out. Qwen is more stable and better grounded in the pilot. |
+| Run | Full corpus with the strict rubric: qwen14b (~24 h), llama8b_gguf (~10 h), O\*NET corpus with qwen14b (~8 h), started 2026-10-20 03:15 IST in `screen` (`dti-full`). PBS jobs queue but are not dispatched on this machine. | |
+| Human coders | The three forms received 2026-10-19 are not used: identical scores on all five dimensions for every occupation, evidence cells containing a number, 99%+ agreement between coders. A new round on a ~200-occupation sample is needed. | |
+
 ## Open — needs professors' input (provisional answers above)
 
 1. **Digital vocabulary in NCO text is sparse.** Only 5.7% of the 3,450 descriptions use
