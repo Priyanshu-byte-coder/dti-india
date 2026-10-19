@@ -15,8 +15,10 @@ cd "${PBS_O_WORKDIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 mkdir -p logs
 exec > "logs/pbs_${PBS_JOBID:-manual}.out" 2>&1
 
+set +u   # conda's activation scripts reference unset variables (PS1)
 source /opt/anaconda3/etc/profile.d/conda.sh
 conda activate "${DTI_ENV:-$HOME/priyanshu/dti-env}"
+set -u
 STAGE=${STAGE:-pilot}
 PILOT=data/interim/pilot_50_seed0.csv
 echo "== ${STAGE} start $(date -Is) on $(hostname)"
