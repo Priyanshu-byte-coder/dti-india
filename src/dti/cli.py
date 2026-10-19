@@ -252,6 +252,39 @@ def cmd_onet_build(args) -> None:
     print(f"  -> {len(isco)} ISCO-08 unit groups, weights: {weighted}")
 
 
+def cmd_onet_dti(args) -> None:
+    """O*NET-transferred DTI in the same file format as the LLM DTI, labelled
+    model_name='onet_<measure>': each NCO-2015 occupation takes the value of its
+    family (= ISCO-08 unit group). Gives the 'O*NET transfer' benchmark of the abstract
+    and lets the PLFS analysis run before the LLM scores exist."""
+    import numpy as np
+
+    from .aggregate import aggregate_level, weighted_z
+    from .crosswalk import nco2004_link
+
+    o = _load_numeric(C.PROCESSED / "onet_measures_isco4.csv", {"isco08"})
+    corpus = _read_csv(C.CORPUS_CSV)
+    occ = corpus[["nco2015", "family4", "group3"]].merge(
+        o[["isco08", args.measure]].rename(columns={"isco08": "family4", args.measure: "value"}), on="family4", how="left"
+    ).dropna(subset=["value"])
+    label = f"onet_{args.measure}"
+    occ = occ.assign(model_name=label, prompt_version="onet31")
+    occ["dti_z"] = weighted_z(occ["value"])
+    occ["dti_0_100"] = 100 * (occ["value"] - occ["value"].min()) / (occ["value"].max() - occ["value"].min())
+    for col in ["dti_mean_score", "q9_overall", "D1", "D2", "D3", "D4", "D5"]:
+        occ[col] = np.nan
+
+    levels = corpus[["nco2015", "family4", "group3"]].merge(nco2004_link(corpus), on="nco2015")
+    for level, name in [("family4", "dti_family4_nco2015"), ("group3", "dti_group3_nco2015"), ("nco2004_g3", "dti_group3_nco2004")]:
+        agg = aggregate_level(occ, levels[["nco2015", level, "link"]], level)
+        path = C.PROCESSED / f"{name}.csv"
+        if path.exists():
+            old = _read_csv(path)
+            agg = pd.concat([old[old["model_name"] != label], agg.astype({level: str})], ignore_index=True)
+        agg.to_csv(path, index=False)
+    print(f"{label}: {len(occ)} of {len(corpus)} NCO occupations covered -> dti_* files (model_name={label})")
+
+
 def cmd_gap(args) -> None:
     from . import gap as G
 
@@ -440,6 +473,11 @@ def main(argv: list[str] | None = None) -> None:
 
     s = sub.add_parser("onet-build", help="O*NET corpus for the LLM, conventional measures, ISCO-08 aggregation")
     s.set_defaults(func=cmd_onet_build)
+
+    s = sub.add_parser("onet-dti", help="O*NET-transferred DTI as a 'model' (onet_<measure>) for comparison / preliminary PLFS runs")
+    s.add_argument("--measure", default="muro_0_100",
+                   choices=["muro_0_100", "wa_computers_im", "kn_computers_im", "kw_share_core", "cx_email"])
+    s.set_defaults(func=cmd_onet_dti)
 
     s = sub.add_parser("gap", help="India (NCO-LLM) vs O*NET correlations and DigitalGap (RQ2)")
     s.add_argument("--model")

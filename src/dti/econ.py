@@ -101,7 +101,9 @@ def run_spec(df: pd.DataFrame, cfg: dict[str, Any], name: str, y: str | None = N
 
 def baseline(df: pd.DataFrame, cfg: dict[str, Any]) -> tuple[pd.DataFrame, dict]:
     rows, models = [], {}
-    for name in cfg["specs"]:
+    for name, spec in cfg["specs"].items():
+        if all(df[t].nunique() <= 1 for t in spec["terms"]):
+            continue  # e.g. the per-dimension model when the DTI has no dimensions (O*NET benchmark)
         models[name], t = run_spec(df, cfg, name)
         rows.append(t)
     return pd.concat(rows, ignore_index=True), models
