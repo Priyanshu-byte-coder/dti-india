@@ -124,7 +124,10 @@ def cmd_aggregate(args) -> None:
 
     rubric = C.load_rubric()
     key = CORPORA[args.corpus]["key"]
-    runs = load_runs(_runs_paths(args.corpus, args.models), key=key, prompt_version=args.prompt_version)
+    corpus_df = _read_csv(CORPORA[args.corpus]["path"])
+    descriptions = dict(zip(corpus_df[key], corpus_df["description"]))
+    runs = load_runs(_runs_paths(args.corpus, args.models), key=key, prompt_version=args.prompt_version,
+                     descriptions=descriptions)
     cons = consensus(runs, key=key)
     occ = pd.concat(
         [build_dti(g, rubric["aggregation"]["weights"]) for _, g in cons.groupby(["model_name", "prompt_version"])],

@@ -21,8 +21,17 @@ from .config import DIMENSIONS
 CATEGORICAL = ("q1_detail", "q10_core", "q11_india_today")
 
 
-def load_runs(paths: list[Path], key: str = "nco2015", prompt_version: str | None = None) -> pd.DataFrame:
-    """Successful runs from JSONL files; the record's `code` is returned as column `key`."""
+def load_runs(
+    paths: list[Path],
+    key: str = "nco2015",
+    prompt_version: str | None = None,
+    descriptions: dict[str, str] | None = None,
+) -> pd.DataFrame:
+    """Successful runs from JSONL files; the record's `code` is returned as column `key`.
+    With `descriptions` (code -> text) the evidence check is recomputed with the current
+    checker instead of using the status stored at scoring time."""
+    from .evidence import check_evidence
+
     rows = []
     for path in paths:
         with open(path, encoding="utf-8") as f:
@@ -48,7 +57,10 @@ def load_runs(paths: list[Path], key: str = "nco2015", prompt_version: str | Non
                 for d in DIMENSIONS:
                     row[d] = c["dimensions"][d]["score"]
                     row[f"{d}_conf"] = c["dimensions"][d]["confidence"]
-                    row[f"{d}_evidence"] = rec.get("evidence_check", {}).get(d)
+                    if descriptions is not None and rec["code"] in descriptions:
+                        row[f"{d}_evidence"] = check_evidence(c["dimensions"][d]["evidence"], descriptions[rec["code"]])
+                    else:
+                        row[f"{d}_evidence"] = rec.get("evidence_check", {}).get(d)
                 rows.append(row)
     df = pd.DataFrame(rows)
     if df.empty:

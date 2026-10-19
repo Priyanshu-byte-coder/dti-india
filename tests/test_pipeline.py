@@ -65,12 +65,20 @@ def test_example_evidence_is_grounded():
     [
         ("", "empty"),
         ("Enters data into Computer", "exact"),
+        ("enters data computer", "close"),               # small words dropped
         ("“enters data”; uses internet", "partial"),
         ("writes software", "not_found"),
+        ("computer enters data", "not_found"),          # same words, invented order
     ],
 )
 def test_check_evidence(evidence, expected):
     assert check_evidence(evidence, "Enters data into computer, files records.") == expected
+
+
+def test_check_evidence_real_case():
+    text = "Process Design Engineer needs to design, develop, and evaluate integrated systems for achieving QCD."
+    assert check_evidence("design, develop, evaluate integrated systems", text) == "close"
+    assert check_evidence("uses CAD software to design systems", text) == "not_found"
 
 
 # --- reliability ------------------------------------------------------------
