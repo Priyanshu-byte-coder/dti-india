@@ -12,6 +12,8 @@ PV=46a323537a
 MAIN=qwen14b
 SECOND=llama8b_gguf
 PY=${PY:-python}
+mkdir -p logs/tmp
+export TMPDIR="$PWD/logs/tmp"   # the system disk (/tmp) on PARAM Shavak can be full
 
 step() { echo; echo "== $*"; }
 

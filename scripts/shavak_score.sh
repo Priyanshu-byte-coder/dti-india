@@ -20,12 +20,10 @@ SLOTS=${SLOTS:-4}                 # parallel sequences in llama.cpp (continuous 
 CTX_PER_SLOT=${CTX_PER_SLOT:-5120}
 GPU=${GPU:-}                      # empty = pick the largest-memory GPU (the GP100)
 
-GGUF=$(python - "$KEY" << 'EOF'
-import sys, yaml
-m = yaml.safe_load(open("configs/models.yaml"))["models"][sys.argv[1]]
-print(m["gguf"]["file"])
-EOF
-)
+# python -c, not a here-document: bash writes here-documents to $TMPDIR, and the system
+# disk (/tmp) on PARAM Shavak can fill up
+GGUF=$(python -c 'import sys, yaml; print(yaml.safe_load(open("configs/models.yaml"))["models"][sys.argv[1]]["gguf"]["file"])' "$KEY")
+[ -n "$GGUF" ] || { echo "no gguf file for $KEY in configs/models.yaml"; exit 1; }
 [ -f "$MODELS/$GGUF" ] || { echo "model file missing: $MODELS/$GGUF (run scripts/shavak_models.sh)"; exit 1; }
 
 if [ -z "$GPU" ]; then

@@ -14,6 +14,9 @@ set -euo pipefail
 cd "${PBS_O_WORKDIR:-$(cd "$(dirname "$0")/.." && pwd)}"
 mkdir -p logs
 exec > "logs/pbs_${PBS_JOBID:-manual}.out" 2>&1
+# temp files on /home: the system disk (/tmp) on this machine can be full
+mkdir -p logs/tmp
+export TMPDIR="$PWD/logs/tmp"
 
 set +u   # conda's activation scripts reference unset variables (PS1)
 source /opt/anaconda3/etc/profile.d/conda.sh
