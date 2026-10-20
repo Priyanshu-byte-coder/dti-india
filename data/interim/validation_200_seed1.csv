@@ -1,0 +1,201 @@
+nco2015,title,division,division_title,kw_any,stratum,stratum_size,stratum_sample,incl_prob,weight
+1120.0400,"Director, Electricity",1,Managers,0,div1_kw0,172,7,0.040697674418604654,24.57142857142857
+1120.3600,"Director, Other Services",1,Managers,0,div1_kw0,172,7,0.040697674418604654,24.57142857142857
+1213.0202,Territory Service Manager,1,Managers,0,div1_kw0,172,7,0.040697674418604654,24.57142857142857
+1311.0500,"General Manager, Dairy Farm",1,Managers,0,div1_kw0,172,7,0.040697674418604654,24.57142857142857
+1321.0200,Terminal Manager,1,Managers,1,div1_kw1,5,2,0.4,2.5
+1321.0600,"Manager, Manufacturing",1,Managers,0,div1_kw0,172,7,0.040697674418604654,24.57142857142857
+1321.9900,"Manufacturing Managers, Other",1,Managers,0,div1_kw0,172,7,0.040697674418604654,24.57142857142857
+1324.0800,"Manager, Flight Operation",1,Managers,1,div1_kw1,5,2,0.4,2.5
+1412.0100,"Manager, Fast Food Service",1,Managers,0,div1_kw0,172,7,0.040697674418604654,24.57142857142857
+2120.0500,Operation Research Analyst,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2131.0500,Economic Botanist,2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2142.0800,Airport Engineer,2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2145.0900,"Technologist, Fuel",2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2152.0801,Electronic Hardware Design Engineer,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2153.0400,"Line Communication Engineer, Telecommunication/Telecommunication Engineer/Technician",2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2165.0300,Aerial-Photograph Interpreter,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2166.0210,Rendering Artist,2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2166.0300,Web Designer,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2166.0401,Designer (CAD),2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2211.0200,"Surgeon, General",2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2211.0500,Psychiatrist,2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2212.1900,"Physiologist, Medical",2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2221.9900,"Professional Nurses, Other",2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2230.0200,"Physician, Homeopathic",2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2230.0300,"Physician, Bio-Chemic/Bio Chemist",2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2264.0400,Masseur,2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2341.0100,Middle School Teacher,2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2355.9900,"Arts Teacher, Other",2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2412.0200,Financial Analyst,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2431.0201,Product Brand Manager (Automotive),2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2431.0300,Caption Writer,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2431.0504,Management Trainee-Product Marketing,2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2432.0201,Digital Marketing/Social Media Manager,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2511.0100,System Analysts,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2511.0101,Deployment Engineer,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2511.0103,Engineer-Packaging,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2511.0106,Support Engineer,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2511.9900,"System Analysts, Other",2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2512.0202,Test Engineer-Software,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2512.0203,Design Engineer (Product Engineer),2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2512.0207,Engineer Trainee-Engineering Analysis,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2512.0701,Application Maintenance Engineer,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2512.0800,"Programmer, Engineering and Scientific/System Programmer",2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2513.0101,Web Developer,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2513.0201,User Interface Developer,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2514.9900,"Computer Programmers, Other",2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2519.0300,Quality Assurance Analyst (Computers),2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2519.0302,Test Engineer-IT Services,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2519.0402,Test Engineer-Software Products,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2523.0501,Hardware Engineer,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2611.0800,Attorney at Law,2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2612.0300,District and Session Judge,2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2619.0200,"Registrar (Appellate Side, High Court)",2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2622.0500,News Librarian,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2632.1200,Geographer,2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2635.1000,Vocational Rehabilitation Counsellor,2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2641.0901,Technical Writer-Product Documentation,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2642.0200,Columnist,2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2643.0300,Interpreter,2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+2643.0401,Language Translator-Software Products,2,Professionals,1,div2_kw1,75,29,0.38666666666666666,2.586206896551724
+2659.1000,Juggler,2,Professionals,0,div2_kw0,563,23,0.04085257548845471,24.478260869565215
+3114.0100,Electronics Technician,3,Technicians and Associate Professionals,1,div3_kw1,28,11,0.39285714285714285,2.5454545454545454
+3114.1301,Network Management Engineer,3,Technicians and Associate Professionals,1,div3_kw1,28,11,0.39285714285714285,2.5454545454545454
+3115.0301,"Executive, Proto Manufacturing",3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3115.0501,Manager Maintenance Mechanical and Electrical,3,Technicians and Associate Professionals,1,div3_kw1,28,11,0.39285714285714285,2.5454545454545454
+3117.0300,"Laboratory Assistant, Metallurgical",3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3119.9900,"Optical and Electronic Equipment Controllers, Other",3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3122.1300,"Supervisor and Foreman, Chemical Processing and Related Activities",3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3122.2100,"Supervisor and Foreman, Plastic Products Making",3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3122.4900,"Supervisor and Foreman, Blacksmith",3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3122.6509,Final Assortment Supervisor,3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3131.0300,"Turbine Operator, Steam",3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3131.0600,Electrical Switch Board Operator,3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3134.0200,Still Man Gas Plant/Gas Plant Operator (Petrol Refining),3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3134.0400,Control Man (Petroleum Refining),3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3134.0500,Blender (Petroleum Refining),3,Technicians and Associate Professionals,1,div3_kw1,28,11,0.39285714285714285,2.5454545454545454
+3135.1200,"Furnace Operator, Second Hand, Open Hearth",3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3153.0500,"Pilot, Glider",3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3211.0801,Cardiac Care Technician,3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3222.0300,Lady Health Visitor/ASHA Worker/Anganwadi Worker,3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3251.9900,"Dental Assistants and Therapists, Other",3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3257.9900,"Environment Science and Protection Technicians, Other",3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3322.1002,Territory Sales Manager (Used Vehicles),3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3322.1702,Marketing and Social Media Manager,3,Technicians and Associate Professionals,1,div3_kw1,28,11,0.39285714285714285,2.5454545454545454
+3352.9900,"Govt. Tax and Excise Officials, Other",3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+3512.0101,Domestic IT Helpdesk Attendant,3,Technicians and Associate Professionals,1,div3_kw1,28,11,0.39285714285714285,2.5454545454545454
+3512.0700,Medical Transcriptionist,3,Technicians and Associate Professionals,1,div3_kw1,28,11,0.39285714285714285,2.5454545454545454
+3512.9900,"Information and Communication Technology User Support Technicians, Other",3,Technicians and Associate Professionals,1,div3_kw1,28,11,0.39285714285714285,2.5454545454545454
+3513.0100,System Administration Assistant/Junior System Administrator,3,Technicians and Associate Professionals,1,div3_kw1,28,11,0.39285714285714285,2.5454545454545454
+3513.0200,Computer Security Specialist,3,Technicians and Associate Professionals,1,div3_kw1,28,11,0.39285714285714285,2.5454545454545454
+3513.9900,"Computer Network and Systems Technician, other",3,Technicians and Associate Professionals,1,div3_kw1,28,11,0.39285714285714285,2.5454545454545454
+3521.1700,Radar Operator,3,Technicians and Associate Professionals,0,div3_kw0,510,20,0.0392156862745098,25.5
+4120.0200,Personal Secretary,4,Clerks/Clerical Support Workers,1,div4_kw1,13,5,0.38461538461538464,2.5999999999999996
+4131.0600,Computer Operator,4,Clerks/Clerical Support Workers,1,div4_kw1,13,5,0.38461538461538464,2.5999999999999996
+4131.9900,"Typists and Word Processing Operators, Other",4,Clerks/Clerical Support Workers,1,div4_kw1,13,5,0.38461538461538464,2.5999999999999996
+4132.0401,Data Entry Machine Operator,4,Clerks/Clerical Support Workers,1,div4_kw1,13,5,0.38461538461538464,2.5999999999999996
+4223.0200,"Telephone Operator, Local",4,Clerks/Clerical Support Workers,0,div4_kw0,103,4,0.038834951456310676,25.750000000000004
+4223.0300,"Telephone Operator, PBX",4,Clerks/Clerical Support Workers,0,div4_kw0,103,4,0.038834951456310676,25.750000000000004
+4312.0100,Statistical Clerks,4,Clerks/Clerical Support Workers,1,div4_kw1,13,5,0.38461538461538464,2.5999999999999996
+4321.0103,Inventory Manager,4,Clerks/Clerical Support Workers,0,div4_kw0,103,4,0.038834951456310676,25.750000000000004
+4321.0501,Store Ops Assistant,4,Clerks/Clerical Support Workers,0,div4_kw0,103,4,0.038834951456310676,25.750000000000004
+5111.9900,"Travel Attendants and Travel Stewards, Other",5,Service and Sales Workers,0,div5_kw0,144,6,0.041666666666666664,24.0
+5151.0101,House Keeper (Institutional)/Housekeeping Supervisor,5,Service and Sales Workers,0,div5_kw0,144,6,0.041666666666666664,24.0
+5151.0500,Linen Keeper,5,Service and Sales Workers,0,div5_kw0,144,6,0.041666666666666664,24.0
+5211.0300,Telemarketing Sales Person/Telemarketing Sales Operator,5,Service and Sales Workers,1,div5_kw1,8,3,0.375,2.6666666666666665
+5223.0102,Jewellery Retail Sales Associate (Basic),5,Service and Sales Workers,0,div5_kw0,144,6,0.041666666666666664,24.0
+5242.0102,Sales Associate,5,Service and Sales Workers,0,div5_kw0,144,6,0.041666666666666664,24.0
+5242.0401,In-Store Promoter,5,Service and Sales Workers,0,div5_kw0,144,6,0.041666666666666664,24.0
+5242.0502,Associate Operations Engineer,5,Service and Sales Workers,1,div5_kw1,8,3,0.375,2.6666666666666665
+5244.0301,Customer Care Executive,5,Service and Sales Workers,1,div5_kw1,8,3,0.375,2.6666666666666665
+6116.0112,Community Service Provider,6,"Skilled Agricultural, Forestry and Fishery Workers",0,div6_kw0,117,5,0.042735042735042736,23.4
+6121.1400,Grass Cutter,6,"Skilled Agricultural, Forestry and Fishery Workers",0,div6_kw0,117,5,0.042735042735042736,23.4
+6129.0200,Mixed Animal Producers,6,"Skilled Agricultural, Forestry and Fishery Workers",0,div6_kw0,117,5,0.042735042735042736,23.4
+6130.0202,Seed Processing Worker,6,"Skilled Agricultural, Forestry and Fishery Workers",0,div6_kw0,117,5,0.042735042735042736,23.4
+6224.9900,"Hunters and Trappers, Other",6,"Skilled Agricultural, Forestry and Fishery Workers",0,div6_kw0,117,5,0.042735042735042736,23.4
+7112.0500,Tar Supervisor,7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7124.0100,"Building Insulator, Hand",7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7132.0300,Metal Sprayer,7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7132.0700,"Painter, Glass",7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7212.0105,Iron and Steel (Tungsten Inert Gas Welder),7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7221.9900,"Blacksmiths, Hammersmiths and Forging Press Workers, Other",7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7223.5002,CNC Operator-Machining Technician,7,Craft and Related Trades Workers,1,div7_kw1,36,14,0.3888888888888889,2.571428571428571
+7231.9900,"Motor Vehicle Mechanics, Other",7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7233.1000,"Mechanic, Stationery Steam Engine",7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7311.0200,Watch Repairer,7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7312.1700,Brass Musical Instruments Assembler,7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7313.0500,Gold Foil Maker,7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7313.0801,Jewel Setter/Setter,7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7313.0804,Wax Tree Maker,7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7315.0100,"Blower, Glass",7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7318.1300,"Grader, Coir",7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7318.2300,"Fibre Preparer, Coir",7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7321.1100,Router,7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7322.2000,"Machine Man, Rotary Printing",7,Craft and Related Trades Workers,1,div7_kw1,36,14,0.3888888888888889,2.571428571428571
+7411.0102,CCTV Installation Technician,7,Craft and Related Trades Workers,1,div7_kw1,36,14,0.3888888888888889,2.571428571428571
+7412.0701,"Electrician, Automobile",7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7419.0300,Wiring Inspector and Bank Tester (Telephone Equipment Manufacturing),7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7421.0801,Field Technician: UPS and Inverter,7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7421.0901,Field Technician: Digital Camera,7,Craft and Related Trades Workers,1,div7_kw1,36,14,0.3888888888888889,2.571428571428571
+7422.0203,Handset Repair Engineer (Level II),7,Craft and Related Trades Workers,1,div7_kw1,36,14,0.3888888888888889,2.571428571428571
+7422.0400,"Lineman, Telephone",7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7422.1200,Cable Television Installer,7,Craft and Related Trades Workers,1,div7_kw1,36,14,0.3888888888888889,2.571428571428571
+7422.1201,Set Top Box Installer/Service Technician,7,Craft and Related Trades Workers,1,div7_kw1,36,14,0.3888888888888889,2.571428571428571
+7422.1203,DAS Set-top Box Installer and Service Technician,7,Craft and Related Trades Workers,1,div7_kw1,36,14,0.3888888888888889,2.571428571428571
+7422.1600,"Radio Craftsman, Installation",7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7422.2101,Field Technician (Networking and Storage),7,Craft and Related Trades Workers,1,div7_kw1,36,14,0.3888888888888889,2.571428571428571
+7422.2301,Smartphone Repair Technician,7,Craft and Related Trades Workers,1,div7_kw1,36,14,0.3888888888888889,2.571428571428571
+7422.9900,"Information and Communications Technology Installers and Servicers, Other",7,Craft and Related Trades Workers,1,div7_kw1,36,14,0.3888888888888889,2.571428571428571
+7512.0200,Mixing Machine Attendant,7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7512.9900,"Bakers, Pastry Cooks and Confectionery Makers, Other",7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7522.1600,Picture Frame Maker,7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7523.1800,Sander Operator,7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7531.0101,Sampling Tailor,7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7531.0200,Dress Maker/Ladies Dress Maker,7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7531.1300,"Pattern Maker, Fur",7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7532.0902,"Advance Pattern Maker, Garment (CAD/CAM)",7,Craft and Related Trades Workers,1,div7_kw1,36,14,0.3888888888888889,2.571428571428571
+7534.9900,"Upholsterers and Related Workers, Other",7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7541.0700,Skin Diver,7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7543.0201,QC Executive-Sewing Line,7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+7543.0802,Performance Tester,7,Craft and Related Trades Workers,1,div7_kw1,36,14,0.3888888888888889,2.571428571428571
+7543.0803,Reliability Tester,7,Craft and Related Trades Workers,1,div7_kw1,36,14,0.3888888888888889,2.571428571428571
+7543.1002,Functional Tester-TV,7,Craft and Related Trades Workers,0,div7_kw0,811,33,0.040690505548705305,24.575757575757574
+8111.2300,Shaft Worker,8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8121.3000,"Charger, Reverberatory, Pulverised Coal Fired/Reverberatory Furnace Operator",8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8131.0300,"Pulveriser Operator, Chemical",8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8131.7100,Tablet Coater,8,"Plant and Machine Operators, and Assemblers",1,div8_kw1,10,4,0.4,2.5
+8141.0101,Pre and Post Calendering Operator,8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8141.1301,Calenderer Rubberised Fabric/Operator-Textile Coating,8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8151.0500,Combing Tenter,8,"Plant and Machine Operators, and Assemblers",1,div8_kw1,10,4,0.4,2.5
+8154.1100,Dye Automation Operator (Textile)/Dyeing Machine Operator,8,"Plant and Machine Operators, and Assemblers",1,div8_kw1,10,4,0.4,2.5
+8154.2100,Stentering Machine Man/Stentering Operator,8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8154.2700,Singeing Machine Man/Singeing Machine Operator,8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8156.2100,"Trimmer, Machine",8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8156.9900,"Cutting, Lasting and Sewing Machine Operators, Other",8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8157.0401,Pressman,8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8159.0300,Balling-Machine Operator (Textile),8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8159.0400,Press Operator,8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8160.0500,Dairy Processing Equipment Operator,8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8160.3500,Filter Pressman,8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8160.5400,Works Poor Attendant,8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8160.5800,Withering Loft Attendant (Tea),8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8160.8400,"Filler, Aerated Water, Hand Machine",8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8160.9900,Food and Related Products Machine Operators,8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8172.0900,"Barrel-Lathe Operator, Outside (Wood Container)",8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8189.0200,"Gem Polisher, Machine",8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8189.0501,Casting Machine Operator,8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8212.1000,"Form Layer, Cable (Telephone Equipment Manufacturing)",8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8212.1808,Wave Soldering Machine Operator,8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8212.1901,Welding Operator,8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8212.2002,PLC Assembly Operator,8,"Plant and Machine Operators, and Assemblers",1,div8_kw1,10,4,0.4,2.5
+8212.2701,PCB Assembly Operator,8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8311.0300,"Driver, Railway Engine, (Diesel)",8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8321.0200,Despatch Rider,8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+8350.0600,Boatman,8,"Plant and Machine Operators, and Assemblers",0,div8_kw0,695,28,0.04028776978417266,24.821428571428573
+9321.0102,Packager and Despatcher,9,Elementary Occupations,1,div9_kw1,2,2,1.0,1.0
+9621.0300,Caddie,9,Elementary Occupations,0,div9_kw0,108,4,0.037037037037037035,27.0
+9621.0400,Bellhop (Hotel and Restaurant),9,Elementary Occupations,0,div9_kw0,108,4,0.037037037037037035,27.0
+9621.0600,(Letter Box Peon) Post Man,9,Elementary Occupations,0,div9_kw0,108,4,0.037037037037037035,27.0
+9623.0200,Coin Collector,9,Elementary Occupations,0,div9_kw0,108,4,0.037037037037037035,27.0
+9623.0501,Tyre Inflation Attendant,9,Elementary Occupations,1,div9_kw1,2,2,1.0,1.0

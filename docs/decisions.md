@@ -84,6 +84,7 @@ strict 0.77 / 0.83, described-task 0.80 / 0.69. Strict vs described within a mod
 | 3. Models | **qwen14b (Qwen2.5-14B-Instruct, Q4_K_M) primary; llama8b_gguf (Llama-3.1-8B-Instruct, Q8_0) second family.** | PARAM Shavak has one 16 GB Pascal GPU: vLLM and the 32B model are out. Qwen is more stable and better grounded in the pilot. |
 | Run | Full corpus with the strict rubric: qwen14b (~24 h), llama8b_gguf (~10 h), O\*NET corpus with qwen14b (~8 h), started 2026-10-20 03:15 IST in `screen` (`dti-full`). PBS jobs queue but are not dispatched on this machine. | |
 | Human coders | The three forms received 2026-10-19 are not used: identical scores on all five dimensions for every occupation, evidence cells containing a number, 99%+ agreement between coders. A new round on a ~200-occupation sample is needed. | |
+| Validation sample | 200 occupations, stratified by division x keyword flag (description names a digital term): 70 keyword, 130 other, at least 2 per division stratum, pilot occupations excluded, seed 1. Weights (1 / inclusion probability) in `data/interim/validation_200_seed1.csv`. Forms: `forms/DTI_Validation_Form_200.xlsx`, per-coder copies in `forms/coders/`. Evidence cells now reject numbers. | `scripts/make_validation_form.py` |
 
 ## Open — needs professors' input (provisional answers above)
 
