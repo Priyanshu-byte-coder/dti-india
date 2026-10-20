@@ -1,0 +1,5 @@
+model,rubric,occupations,share_all_zero,mean_score_0_4,icc_runs_median,alpha_runs_median,scores_gt0,grounded_share,ungrounded_empty,ungrounded_not_found,spearman_q9_vs_mean,spearman_vs_onet_muro
+llama8b_gguf,strict (v1.0),50,0.62,0.372,0.679,0.715,242,0.731,52,13,0.835,0.424
+llama8b_gguf,described-task (v1.1),50,0.64,0.34,0.634,0.669,225,0.782,33,16,0.902,0.498
+qwen14b,strict (v1.0),50,0.5,0.524,0.805,0.772,292,0.887,9,24,0.858,0.586
+qwen14b,described-task (v1.1),50,0.48,0.508,0.782,0.809,320,0.894,13,21,0.867,0.456

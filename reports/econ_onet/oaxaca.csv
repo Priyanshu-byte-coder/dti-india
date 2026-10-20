@@ -1,0 +1,13 @@
+component,value,group_0,group_1
+total gap,0.31647698901193566,female=0,female=1
+explained,0.040949449712947394,female=0,female=1
+unexplained,0.2755275392990108,female=0,female=1
+explained: dti,-0.0008884806002668523,female=0,female=1
+explained: age,-0.01953621014699832,female=0,female=1
+explained: demographics,0.006567382815246422,female=0,female=1
+explained: education,0.013419609743998561,female=0,female=1
+explained: social group / religion,0.004783832441965918,female=0,female=1
+explained: state,-0.027135583826552335,female=0,female=1
+explained: industry,0.06857984378195313,female=0,female=1
+explained: time,-0.004498275621929913,female=0,female=1
+explained: occupation division,-0.0003426688744664164,female=0,female=1

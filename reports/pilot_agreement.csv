@@ -1,0 +1,5 @@
+rubric,models,spearman_dti,kappa_quadratic_rounded
+strict (v1.0),llama8b_gguf vs qwen14b,0.766,0.828
+described-task (v1.1),llama8b_gguf vs qwen14b,0.802,0.689
+strict vs described,llama8b_gguf,0.814,
+strict vs described,qwen14b,0.861,

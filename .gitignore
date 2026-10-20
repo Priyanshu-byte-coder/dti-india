@@ -14,7 +14,13 @@ logs/
 # Generated outputs (reproducible from code + corpus; large)
 data/llm/
 data/processed/
-reports/
+# Result tables (estimates only) are committed; dry runs, mock outputs and row-level exports are not
+reports/*
+!reports/econ_onet/
+!reports/econ_llm*/
+!reports/gap/
+!reports/pilot_*.csv
+reports/**/grf_input.csv
 
 # Filled human coder forms: personal data of coders, shared privately
 data/human/
