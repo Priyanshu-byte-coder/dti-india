@@ -2,7 +2,7 @@
 
 Anuja Nair (Institute of Technology, Nirma University) · Gunjan Anand (Institute of Management, Nirma University) · Samik Shome (Institute of Management, Nirma University)
 
-*Working draft. Status markers: **[PENDING-LLM]** = filled from the LLM scoring run on PARAM Shavak; **[PENDING-HUMAN]** = filled after the new round of human coding; **[PRELIMINARY]** = computed with the O\*NET-transferred measure and kept as the benchmark column once the LLM results exist. Numbers in the text come only from files in `reports/`; none are typed by hand.*
+> **Note for co-authors (status on 20 October 2026).** This draft follows the submitted extended abstract section by section (title, RQ1–RQ4, method, interpretation). Sections 1–5 (introduction, literature, data, index construction, empirical strategy) are complete. Section 6 reports what is available now: (i) the pilot of the LLM instrument (RQ1), and (ii) the full PLFS wage analysis estimated with the **O\*NET-transferred** digital-intensity measure, which the abstract uses as the benchmark (RQ3–RQ4, marked PRELIMINARY). The full LLM scoring of all 3,450 NCO occupations is running on PARAM Shavak and is expected to finish on 22 October; the same pipeline will then fill the parts marked **[PENDING-LLM]** and add the NCO-LLM column next to every O\*NET result. Human validation (**[PENDING-HUMAN]**) needs a new round of coding: the three forms received were not usable (identical scores on all five dimensions for every occupation). All numbers come from generated result files; none are typed by hand. Results tables: `paper/tables_onet.md`; code and logs: private repository `dti-india`.
 
 ---
 
@@ -75,7 +75,7 @@ Following the abstract (eq. 1), dimension scores are standardised and aggregated
 DTI_j = \sum_{k=1}^{5} w_k \, D_{jk}, \qquad w_k = 1/5
 ```
 
-where *D_jk* is the standardised score of occupation *j* on dimension *k*. Alternative weights (principal components; weights implied by the holistic overall score) are robustness checks. As in Vashisht and Dubey (2019), the index aggregates several task items rather than relying on one.
+where *Dⱼₖ* is the standardised score of occupation *j* on dimension *k*. Alternative weights (principal components; weights implied by the holistic overall score) are robustness checks. As in Vashisht and Dubey (2019), the index aggregates several task items rather than relying on one.
 
 ### 4.4 Reliability and validation (RQ1)
 
@@ -106,7 +106,7 @@ computed on the common 0–4 scale for the same-instrument version and as percen
 \ln Wage_i = \alpha + \beta \, DTI_{j(i)} + \gamma X_i + \delta_s + \lambda_r + \tau_t + \epsilon_i
 ```
 
-*X_i* contains age, age², gender, marital status, rural residence, education, social group and religion; δ, λ and τ are industry (NIC two-digit), state and year-quarter fixed effects. DTI is standardised across workers in the estimation sample, so β is the log-wage difference associated with a one-standard-deviation higher occupational DTI. The specification ladder adds controls and fixed effects step by step (M1–M4); the preferred specification (M4) adds occupational division fixed effects, so β compares occupations within the same broad skill group. M5 replaces the index with its five dimensions. Estimates are weighted by PLFS weights; standard errors are clustered by occupation, the level at which DTI varies, with a wild cluster bootstrap as a check.
+*Xᵢ* contains age, age², gender, marital status, rural residence, education, social group and religion; δ, λ and τ are industry (NIC two-digit), state and year-quarter fixed effects. DTI is standardised across workers in the estimation sample, so β is the log-wage difference associated with a one-standard-deviation higher occupational DTI. The specification ladder adds controls and fixed effects step by step (M1–M4); the preferred specification (M4) adds occupational division fixed effects, so β compares occupations within the same broad skill group. M5 replaces the index with its five dimensions. Estimates are weighted by PLFS weights; standard errors are clustered by occupation, the level at which DTI varies, with a wild cluster bootstrap as a check.
 
 β is interpreted as a **conditional digital occupational wage premium**, not as the causal return to digital skills: workers are not randomly assigned to occupations, and occupational sorting may depend on ability, family background and other unobservables. We report Oster (2019) bounds to gauge how strong selection on unobservables would need to be to explain the estimate away.
 
@@ -122,7 +122,18 @@ Unconditional quantile (RIF) regressions (Firpo, Fortin and Lemieux, 2009) and c
 
 ### 6.1 The DTI index and its reliability (RQ1)
 
-**[PENDING-LLM]** Distribution of DTI by division and skill level; most and least digital occupations; run stability (ICC, α); cross-model agreement; grounding rate; comparison of strict and described-task readings.
+*Pilot evidence (50 occupations stratified by division, five runs each, two models, two readings of "text only").* Source: `reports/pilot_comparison.csv`, `reports/pilot_agreement.csv`.
+
+| Model | Rubric | Occupations scored 0 on all dimensions | Run stability, ICC(2,1) (median dimension) | Run stability, Krippendorff α (median) | Non-zero scores with a quote found in the text | Spearman with holistic score (Q9) | Spearman with O\*NET (Muro) |
+|---|---|---|---|---|---|---|---|
+| Qwen2.5-14B | strict (main) | 50% | 0.81 | 0.77 | 89% | 0.86 | 0.59 |
+| Qwen2.5-14B | described-task | 48% | 0.78 | 0.81 | 89% | 0.87 | 0.46 |
+| Llama-3.1-8B | strict | 62% | 0.68 | 0.72 | 73% | 0.84 | 0.42 |
+| Llama-3.1-8B | described-task | 64% | 0.63 | 0.67 | 78% | 0.90 | 0.50 |
+
+Agreement between the two model families on the mean score is a Spearman correlation of 0.77 (strict) and 0.80 (described-task), with quadratic-weighted κ of 0.83 and 0.69 on rounded scores. Within a model, the two readings correlate at 0.86 (Qwen) and 0.81 (Llama). Three points stand out. First, the instrument is reasonably stable across repeated runs at temperature 0.7 (ICC around 0.8 for the primary model), and its dimension scores track its own holistic judgement (ρ ≈ 0.86), which supports aggregating dimensions with equal weights. Second, the primary model grounds 89% of its non-zero scores in words that appear in the official description; the remaining cases are mostly scores given without a quote, where the model relied on general knowledge despite the rule. Third, about half of occupations receive zero on every dimension, reflecting how rarely NCO-2015 descriptions mention digital work (Section 3.1); the broader described-task reading hardly changes this.
+
+**[PENDING-LLM]** Full-corpus results (3,450 occupations): distribution of DTI by division and skill level; most and least digital occupations; run stability; cross-model agreement; grounding rate.
 
 **[PENDING-HUMAN]** Human–LLM agreement relative to human–human agreement.
 
@@ -132,11 +143,13 @@ Unconditional quantile (RIF) regressions (Firpo, Fortin and Lemieux, 2009) and c
 
 ### 6.3 The conditional digital occupational premium (RQ3)
 
-**[PRELIMINARY — O\*NET-transferred DTI.]** The estimates in 6.3–6.4 use the O\*NET-transferred measure (Muro-type computer importance × level, mapped to NCO families; Section 4.6). They will be re-estimated with the NCO-LLM DTI **[PENDING-LLM]** and then reported side by side, which is itself the RQ2 comparison applied to wages. Tables are in `paper/tables_onet.md` (generated from `reports/econ_onet/`).
+**[PRELIMINARY — O\*NET-transferred DTI.]** The estimates in 6.3–6.4 use the O\*NET-transferred measure (Muro-type computer importance × level, mapped to NCO families; Section 4.6). They will be re-estimated with the NCO-LLM DTI **[PENDING-LLM]** and then reported side by side, which is itself the RQ2 comparison applied to wages. Tables 1–10 below are generated from `reports/econ_onet/` by `paper/make_tables.py`.
 
 The sample comprises 465,826 regular and casual wage earners aged 15–64 in seven PLFS rounds, in 230 occupation groups (109 NCO-2004 and 121 NCO-2015 groups; Table 1). Without controls, a one-standard-deviation higher occupational DTI is associated with 30.4 log points higher hourly wages (Table 2, M1). Individual characteristics absorb most of this (M2: 11.2), state and industry fixed effects little more (M3: 10.7), and comparing occupations within the same broad occupational division halves it again: in the preferred specification the conditional premium is **5.7 log points** (SE 1.5, M4). The estimate is stable to unweighted estimation (6.4) and to the wild cluster bootstrap (p = 0.001), is larger for monthly earnings (8.4), and is similar in the NCO-2004 (6.4) and NCO-2015 (4.4) rounds and when only directly linked NCO-2004 groups are used (5.5; Table 4). Correcting for selection into wage employment leaves it unchanged (5.7; Table 5).
 
 Two results qualify the average. First, the premium is non-linear: relative to the least digital fifth of occupations, only the most digital fifth earns significantly more (13.5 log points; the second to fourth quintiles are within 0–4 points and not significant). Second, coefficient stability is weak: moving from M1 to M4 raises R² from 0.28 to 0.57 while the coefficient falls by four-fifths, so by Oster's (2019) criterion selection on unobservables only 0.40 times as strong as selection on observables would be enough to remove it (Table 3). This is consistent with our interpretation of β as a **conditional occupational association rather than a causal return** to digital skills, and with substantial sorting of more able workers into digitally intensive occupations. Among regular wage workers the premium is 5.0; among casual workers it is zero (0.9, SE 1.8).
+
+<!-- TABLES:1,2,3,4,5 -->
 
 ### 6.4 Heterogeneity (RQ4)
 
@@ -155,6 +168,8 @@ Two results qualify the average. First, the premium is non-linear: relative to t
 *Rural–urban.* The evidence is mixed. Within occupations and holding other interactions fixed, the premium is 3.4 points lower for rural workers; estimated separately, and in the machine-learning group effects, it is higher for rural workers (7.8 vs 4.0; 4.9 vs 3.0). The difference comes from how the other characteristics are allowed to vary and will be examined further with the final index.
 
 *Summary.* With the O\*NET-transferred measure, the conditional digital occupational premium is modest on average, concentrated at the top of the wage distribution, and absent for workers with little education, in informal regular jobs and in casual work. In the language of the abstract, this points to a **digital-returns gap** in addition to any digital-skills gap. **[To be confirmed with the NCO-LLM DTI.]**
+
+<!-- TABLES:6,7,8,9,10 -->
 
 ## 7. Discussion and policy relevance
 
