@@ -21,13 +21,16 @@ DIV = {"1": "Managers", "2": "Professionals", "3": "Technicians & assoc. profess
        "4": "Clerical support", "5": "Service & sales", "6": "Skilled agriculture",
        "7": "Craft & related trades", "8": "Plant & machine operators", "9": "Elementary occupations"}
 
-STATUS_TIME = "21 October 2026, 09:58 IST"
+STATUS_TIME = sys.argv[3] if len(sys.argv) > 3 else "21 October 2026"
+ONET_PROGRESS = sys.argv[4] if len(sys.argv) > 4 else "running"
 RUNNING = [
     ("Qwen2.5-14B scores all 3,450 NCO occupations × 5 runs", "Done (21 Oct, 05:50)", "17,250 / 17,250, 0 failed"),
     ("Wage analysis with the NCO-LLM DTI (RQ3–RQ4)", "Done (21 Oct, 08:34)", "10 tables"),
-    ("Llama-3.1-8B scores all occupations (second model, cross-check)", "Running", "41% · finishes ≈ 16:00, 21 Oct"),
-    ("Qwen2.5-14B scores 923 O*NET occupations (RQ2 same-instrument benchmark)", "Queued", "finishes ≈ 00:00, 22 Oct"),
-    ("Human validation: 3 coders × 200 occupations", "With coders", "forms due 21 Oct, 22:00"),
+    ("Llama-3.1-8B scores all occupations (second model)", "Done (21 Oct, 15:40)", "17,250 / 17,250, 0 failed"),
+    ("Cross-model agreement; wage robustness with the Llama DTI", "Done (21 Oct, 15:55)", "Sections 2 and 3"),
+    ("DoubleML with four ML learners, occupation-clustered SEs", "Done (21 Oct)", "Section 4, last table"),
+    ("Qwen2.5-14B scores 923 O*NET occupations (RQ2 same-instrument benchmark)", "Running", ONET_PROGRESS),
+    ("Human validation (coders)", "Not usable yet", "round 2 forms rejected, see Section 2"),
 ]
 
 
@@ -120,6 +123,7 @@ rob_specs = ["M4 unweighted", "M4 unweighted, wild cluster bootstrap", "M4 month
              "M4 self-employed (earnings incl. capital returns)"]
 rob_rows = [[e(s.replace(">=", "≥")), cell(rb, s), cell(rbo, s)] for s in rob_specs]
 rob_rows.append(["Heckman selection correction (all)", cell(hk, "Heckman all"), cell(hko, "Heckman all")])
+rob_rows.append(["DTI from the second LLM (Llama-3.1-8B)", cell(rd("econ_llm_llama8b_gguf", "baseline.csv"), "M4"), "—"])
 for q in ["dti_q2", "dti_q3", "dti_q4", "dti_q5"]:
     rob_rows.append([f"DTI quintile {q[-1]} vs lowest fifth", cell(rb, "M4 DTI quintiles (base Q1)", q),
                      cell(rbo, "M4 DTI quintiles (base Q1)", q)])
@@ -146,6 +150,43 @@ int_terms = [("Women vs men", "occupation FE + interactions", "dti_x_female"),
 int_rows = [[lab, cell(it, m, t), cell(ito, m, t)] for lab, m, t in int_terms]
 ox, oxo = rd("econ_llm", "oaxaca.csv").set_index("component")["value"], rd("econ_onet", "oaxaca.csv").set_index("component")["value"]
 ate, ateo = rd("econ_llm", "dml_ate.csv").iloc[0], rd("econ_onet", "dml_ate.csv").iloc[0]
+LN = {"linear": "Linear regression", "lasso": "Lasso (cross-validated)", "random_forest": "Random forest",
+      "gradient_boosting": "Gradient boosting"}
+lrn = rd("econ_llm", "dml_learners.csv")
+lrno = rd("econ_onet", "dml_learners.csv") if (R / "econ_onet" / "dml_learners.csv").exists() else None
+lrn_rows = []
+for r in lrn.itertuples():
+    o = lrno[lrno["learner"] == r.learner].iloc[0] if lrno is not None else None
+    lrn_rows.append([LN[r.learner], lp(r.coef, r.se_cluster, r.p), f"[{100 * r.ci_low:.1f}, {100 * r.ci_high:.1f}]",
+                     f"{r.r2_wage:.3f}", f"{r.r2_dti:.3f}", "—" if o is None else lp(o["coef"], o["se_cluster"], o["p"])])
+best = lrn.loc[lrn["r2_wage"].idxmax()]
+not_sig = ", ".join(LN[x].split(" (")[0].lower() for x in lrn[lrn["p"] >= 0.05]["learner"]) or "no learner"
+onet_ml_note = ""
+if lrno is not None:
+    bo_ = lrno.loc[lrno["r2_wage"].idxmax()]
+    onet_ml_note = (f"With the O*NET-transferred DTI the spread is wider: {100 * lrno['coef'].min():.1f}–{100 * lrno['coef'].max():.1f} log points, and the "
+                    f"best-fitting learner ({LN[bo_['learner']].lower()}) gives {lp(bo_['coef'])} (p = {bo_['p']:.2f}). The larger O*NET premium in the "
+                    "linear models therefore shrinks once controls enter flexibly, while the India-specific estimate is more stable across learners.")
+
+# second model
+bll = rd("econ_llm_llama8b_gguf", "baseline.csv")
+m4l = row(bll, "M4")
+cm = rd("cross_model.csv")
+cm_rows = [[DIM_NAMES.get(r.item, "Holistic score (Q9, 0–10)"), f"{100 * r.exact_agree:.0f}%", f"{100 * r.within_1:.0f}%",
+            f"{r.kappa_quadratic:.2f}", f"{r.spearman:.2f}"] for r in cm.itertuples()]
+lvl_rows = []
+occ_all = pd.read_csv(REPO / "data/processed/dti_occupation_nco2015.csv", dtype={"nco2015": str})
+w = occ_all.pivot(index="nco2015", columns="model_name", values="dti_z").dropna()
+lvl_rows.append(["8-digit occupation", len(w), f"{w.corr(method='spearman').iloc[0, 1]:.2f}"])
+for f, k, lab in [("dti_family4_nco2015", "family4", "4-digit family (NCO-2015)"),
+                  ("dti_group3_nco2015", "group3", "3-digit group (NCO-2015, PLFS 2021-24)"),
+                  ("dti_group3_nco2004", "nco2004_g3", "3-digit group (NCO-2004, PLFS 2017-21)")]:
+    gg = pd.read_csv(REPO / f"data/processed/{f}.csv", dtype={k: str})
+    w = gg.pivot(index=k, columns="model_name", values="dti_z").dropna()
+    lvl_rows.append([lab, len(w), f"{w.corr(method='spearman').iloc[0, 1]:.2f}"])
+stl = pd.read_csv(R / "stability_runs.csv")
+stl = stl[stl["model_name"] == "llama8b_gguf"]
+zero_llama = (occ_all[occ_all["model_name"] == "llama8b_gguf"][D].sum(axis=1) == 0).mean()
 gate = rd("econ_llm", "dml_gate.csv")
 
 
@@ -193,14 +234,14 @@ India-specific DTI goes with <b>{lp(m4['coef'])} log points (≈ {pct(m4['coef']
 occupational division (SE {100 * m4['se']:.1f}), somewhat below the {lp(m4o['coef'])} obtained with the US O*NET measure. The premium is
 concentrated at the top of the wage distribution and is absent for workers with at most primary education, informal regular
 jobs and casual work — the pattern the abstract calls a <i>digital-returns gap</i>. It is a conditional association, not a
-causal return. Still to come: the second model (today, ≈ 16:00), the India–US comparison RQ2 (tonight) and human validation (forms due tonight).</div>
+causal return. A second LLM ranks occupation groups almost identically (Spearman {lvl_rows[2][2]}), and the DML estimate is similar across four ML learners. Still to come: the India–US comparison RQ2 (22 Oct, early morning) and valid human validation.</div>
 
 <h2>1. What is running and what is left</h2>
 {table(["Step", "Status", "Detail"], [[e(a), b, e(c)] for a, b, c in RUNNING], "left")}
 <ul>
 <li>Jobs run on PARAM Shavak (Quadro GP100) inside <code>screen</code>; they do not depend on anyone's laptop.</li>
-<li>After the queue finishes: aggregate both models, cross-model agreement, India vs O*NET gap (RQ2), wage robustness with the second model,
-then the human–LLM comparison once forms pass the quality checks. About half a day of work; updated paper draft on 22 Oct.</li>
+<li>After the O*NET scoring: same-instrument India vs O*NET gap (RQ2), then the paper draft is updated. The human–LLM comparison runs as soon as
+valid coder forms arrive.</li>
 <li>Decisions still open for the professors: wage-model choices marked OPEN in <code>configs/analysis.yaml</code>; confirmation of the strict rubric (Section 2).</li>
 </ul>
 
@@ -232,9 +273,20 @@ use any digital term. It is the main reason to compare with O*NET (RQ2).</li>
 <div class=mean><b>Meaning.</b> The ranking is economically sensible (professionals &gt; technicians &gt; clerks &gt; … &gt; agriculture and elementary
 work) and the most digital occupations are the expected ones — face validity for the instrument.
 PLFS match rate: {100 * cov['share_matched_weighted'].min():.1f}–{100 * cov['share_matched_weighted'].max():.1f}% of employed workers in each round receive a DTI.</div>
-<div class=warn><b>Pending for RQ1.</b> (i) Agreement between the two model families on all occupations (Llama finishes today; pilot: Spearman 0.77,
-weighted κ 0.83). (ii) Human validation: 3 coders × 200 occupations (stratified by division and by whether the text names digital work;
-the pilot occupations excluded). The first round of coder forms was not usable (identical scores on all five dimensions for every occupation).</div>
+<h3>Agreement between two LLM families (Qwen2.5-14B vs Llama-3.1-8B, all 3,450 occupations)</h3>
+<div class=two><div>{table(["Dimension", "Exact", "Within 1", "Weighted κ", "Spearman"], cm_rows)}</div>
+<div>{table(["Level", "Units", "Spearman, DTI"], lvl_rows)}</div></div>
+<div class=mean><b>Meaning.</b> Two independently trained models, from different companies and of different size, rank occupation <i>groups</i> (the level
+at which DTI enters the wage regressions) almost identically ({lvl_rows[2][2]} for the NCO-2015 groups). Agreement on single occupations is moderate,
+highest for information processing and content/problem solving and lowest for communication, which is rarely non-zero. Llama is the noisier
+instrument: run stability ICC {stl['icc_2_1'].min():.2f}–{stl['icc_2_1'].max():.2f} (Qwen {stab['icc_2_1'].min():.2f}–{stab['icc_2_1'].max():.2f}) and {100 * zero_llama:.0f}% all-zero occupations
+(Qwen {100 * zero_share:.0f}%). This supports Qwen as the main instrument.</div>
+<div class=warn><b>Human validation not yet usable.</b> 200 occupations were sent to three coders (stratified by division and by whether the text names
+digital work; pilot occupations excluded). The two forms returned on 21 Oct failed the quality checks and are not used: one is a near-copy of the other
+(96% identical rows, identical evidence, same coder ID), no occupation was scored 0 although the rule requires 0 when the text is silent,
+agricultural and elementary jobs score like professionals, only 23% of evidence words appear in the description, and scores repeat in a fixed
+10-row pattern. (The first round, 19 Oct, gave identical scores on all five dimensions.) A smaller sample coded independently, e.g. 100 occupations
+by two coders, would suffice.</div>
 
 <h2>3. RQ3 — Conditional digital occupational wage premium</h2>
 <p>ln(real hourly wage) of regular and casual wage earners aged 15–64, seven PLFS rounds, PLFS weights, standard errors clustered by
@@ -247,7 +299,9 @@ modest but clearly different from zero (p = {m4['p']:.3f}). With the US O*NET me
 <h3>How robust is it?</h3>
 {table(["Check (all M4)", "NCO-LLM DTI", "O*NET DTI"], rob_rows)}
 <div class=mean><b>Meaning.</b> The premium survives unweighted estimation, the wild cluster bootstrap, monthly earnings, direct links only
-and correction for selection into wage work; it is weaker (significant only at 10%) in the pre-2021 NCO-2004 rounds. It is <b>not linear</b>: only the two most digital fifths of occupations earn significantly more.
+and correction for selection into wage work; it is weaker (significant only at 10%) in the pre-2021 NCO-2004 rounds.
+With the DTI from the second LLM it is {lp(m4l['coef'])} (p = {m4l['p']:.3f}): same sign and pattern, smaller, as expected when the noisier Llama scores
+attenuate the estimate. It is <b>not linear</b>: only the two most digital fifths of occupations earn significantly more.
 It is absent for casual workers and the self-employed.</div>
 <div class=warn><b>Not causal.</b> Oster (2019) δ = {ost['delta_for_beta_0']:.2f} (O*NET: {osto['delta_for_beta_0']:.2f}): selection on unobservables only about a third as strong as selection
 on observables would explain the premium away. Workers sort into digital occupations by ability and background, so the paper reports β as a
@@ -273,10 +327,19 @@ but occupational DTI explains almost none of the {100 * ox['total gap']:.1f}-poi
 O*NET: {100 * oxo['explained: dti']:.1f}). Most of the gap ({100 * ox['unexplained']:.1f} points) is unexplained.</li>
 <li><b>Rural–urban is mixed.</b> Estimated separately, the premium is higher for rural workers; within the same occupation it is lower. This needs
 care in the paper and is reported as inconclusive.</li>
-<li><b>Machine-learning check</b> (double/debiased ML, 200,000-worker subsample): average effect {lp(ate['coef'])} log points (SE {100 * ate['std err']:.1f});
-O*NET {lp(ateo['coef'])}. Group effects confirm the education and gender gradients.</li>
+<li><b>Machine-learning group effects</b> (double/debiased ML with gradient boosting) confirm the education and gender gradients.</li>
 </ul>
 </div>
+<h3>Machine-learning check: does the result depend on the ML model?</h3>
+<p>Double/debiased ML (partially linear model, 200,000-worker random subsample, 5-fold cross-fitting by occupation, standard errors clustered by
+occupation). The same estimator is run with four learners for the two nuisance predictions (wage from controls, DTI from controls).
+R² = how well each learner predicts on held-out data.</p>
+{table(["Learner", "Average effect (cluster SE)", "95% CI", "R², wage", "R², DTI", "O*NET DTI"], lrn_rows)}
+<div class=mean><b>Meaning.</b> The effect is {100 * lrn['coef'].min():.1f}–{100 * lrn['coef'].max():.1f} log points across learners, close to the regression estimate ({lp(m4['coef'])}):
+the result does not hinge on one ML model. The best-fitting learner is {LN[best['learner']].lower()} (highest out-of-sample R² for wages), with
+{lp(best['coef'])} log points (95% CI {100 * best['ci_low']:.1f} to {100 * best['ci_high']:.1f}). With occupation-clustered standard errors the intervals are much wider than
+in a DML run that treats workers as independent; with {not_sig} the effect is not significant at 5%.
+{onet_ml_note}</div>
 <div class=box><b>Policy reading (abstract, Section 7).</b> Digital intensity of an occupation translates into higher pay mainly for educated, formally employed,
 higher-paid workers. For the less educated, informal and casual workforce the premium is zero. This is a <b>digital-returns gap</b>, not only a
 digital-skills gap: basic digital training alone is unlikely to close it without formalisation, advanced skills and access to digitally enabled jobs.</div>
@@ -295,7 +358,7 @@ NCO-2015 → NCO-2004 concordance (2,657 direct links, others via siblings); O*N
 <li>PLFS microdata are not redistributed; only estimates appear in the repository. Code: private GitHub repository <code>dti-india</code>
 (guide for writing: <code>docs/PAPER_GUIDE.md</code>).</li>
 </ul>
-<p class=note>Preliminary results for internal discussion; numbers may change slightly once the second model and the human validation are added.</p>
+<p class=note>Preliminary results for internal discussion; numbers may change slightly once RQ2 and the human validation are added.</p>
 </body></html>"""]
 
 html_path = OUT.with_suffix(".html")

@@ -182,3 +182,16 @@ Group average effects:
 | edu_band | edu_band=up_to_primary | 0.006 | [-0.015, 0.028] | 60,093 |
 | emp_type | emp_type=casual | 0.039 | [0.022, 0.056] | 78,027 |
 | emp_type | emp_type=regular | 0.037 | [0.031, 0.043] | 121,973 |
+
+Standard errors in this table treat workers as independent; Table 11 gives the average effect with standard errors clustered by occupation.
+
+## Table 11. Double/debiased ML: comparison of machine-learning learners
+
+Partially linear model, 5-fold cross-fitting by occupation cluster, standard errors clustered by occupation (233 clusters), N = 200,000 (random subsample). R² of the cross-fitted predictions of the wage and of DTI from the controls; the higher, the better the learner removes confounding.
+
+| Nuisance learner | Average effect (cluster SE) | 95% CI | Out-of-sample R², wage | Out-of-sample R², DTI |
+|---|---|---|---|---|
+| Linear regression | 0.040** (0.017) | [0.007, 0.074] | 0.543 | 0.650 |
+| Lasso (cross-validated) | 0.026 (0.017) | [-0.007, 0.060] | 0.545 | 0.651 |
+| Random forest | 0.044* (0.026) | [-0.008, 0.096] | 0.504 | 0.703 |
+| Gradient boosting | 0.033** (0.014) | [0.005, 0.061] | 0.594 | 0.694 |
