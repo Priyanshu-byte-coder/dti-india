@@ -77,3 +77,24 @@ qstat -a                                                    # status; output in 
 `scripts/shavak_score.sh <model>` does one model directly (e.g. inside `screen`).
 Everything is resumable. Expect the full NCO corpus (3,450 × 5 runs) to take on the order
 of a day or more per model on this GPU; the pilot gives the actual rate.
+
+## What actually ran (Oct 2026) and lessons
+
+- **PBS accepts jobs but never dispatches them** on this machine, so every run used `screen`:
+  `screen -dmS dti-full bash logs/full_chain.sh` (qwen14b full → llama8b_gguf full → qwen14b O*NET,
+  strict rubric, 8 slots × 3072 ctx; O*NET 6 slots × 4096). Watch with `screen -ls` and
+  `bash ~/priyanshu/status.sh` (progress, rate, ETA per output file, GPU use).
+- **Measured rates:** qwen14b ≈ 0.20 calls/s (17,250 calls in ≈ 26.5 h), llama8b_gguf ≈ 0.5 calls/s
+  (≈ 10 h), qwen14b on O*NET text ≈ 0.13 calls/s (longer prompts; 4,615 calls ≈ 10 h). 0 failed calls.
+- **The system disk (`/`, holds `/tmp`) filled up on 20 Oct** (another user). Bash here-documents
+  then fail ("cannot create temp file for here-document"). `shavak.pbs` and `post_run.sh` now set
+  `TMPDIR=logs/tmp` on `/home`, and `shavak_score.sh` no longer uses a here-document.
+- **Replacing a script while a job runs it:** upload as `<file>.new` and `mv` it over the old one;
+  running bash keeps reading the old file, the next invocation gets the new one. Editing in place
+  can corrupt the running job.
+- The login shell's `python`/`pip` are not the project's; use `~/priyanshu/dti-env/bin/python` or put
+  `~/priyanshu/dti-env/bin` first on `PATH`.
+- The server cannot reach the Hugging Face CDN or conda channels; models were relayed from a laptop.
+- No R on the server (the causal forest script `scripts/grf_causal_forest.R` cannot run here).
+- CPU steps (analysis, DML) run on the same node alongside the GPU job: 36 cores, 92 GB RAM.
+- After the scoring: `bash scripts/post_run.sh` (all steps to the paper tables).

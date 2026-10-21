@@ -1,6 +1,6 @@
 # Paper writing guide
 
-For whoever writes or edits the paper. It says what is final, what is still coming, where
+For whoever writes or edits the paper. **Every result so far, with tables and meaning: [RESULTS.md](RESULTS.md).** It says what is final, what is still coming, where
 every number comes from, and how to rebuild the Word file. Status as of **21 October 2026, 18:00 IST**.
 
 ## Ground rules
@@ -119,8 +119,8 @@ For orientation only; source `reports/econ_onet/`, tables in `paper/tables_onet.
 - RQ1: run stability ICC 0.70–0.84 by dimension (Qwen), 0.57–0.75 (Llama); 87% of non-zero scores grounded
   in a quote from the description; 51.6% of occupations all-zero (Llama 62.4%). Qwen vs Llama: Spearman 0.74
   across 3,450 occupations, **0.91 at the 3-digit group level used in PLFS**, 0.89 families, 0.86 NCO-2004 groups.
-- RQ3 (Qwen DTI): M4 premium **4.1 log points (SE 1.3)**; O\*NET-transferred 5.7. With the Llama DTI: 2.3
-  (SE 1.2, p = 0.052): same pattern, smaller and borderline; Llama is the noisier instrument (attenuation).
+- RQ3 (Qwen DTI): M4 premium **4.1 log points (SE 1.3)**; O\*NET-transferred 5.7. With the Llama DTI: 2.2
+  (SE 1.1, p = 0.052): same pattern, smaller and borderline; Llama is the noisier instrument (attenuation).
   Oster δ 0.34. Weaker in pre-2021 NCO-2004 rounds (3.1, p < 0.1).
 - RQ4: premium only at the top (RIF q90 21.3, q10–q50 n.s.); zero for up-to-primary education, informal regular
   and casual workers; women 5.6 vs men 3.6; DTI explains ~none of the gender gap; rural–urban mixed.

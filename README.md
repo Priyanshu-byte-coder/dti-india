@@ -15,16 +15,17 @@ by occupation code for the wage analysis.
 |---|---|---|
 | 1 | NCO-2015 corpus (3,450 occupations) + NCO-2004 link | done: `dti corpus` |
 | 2 | Rubric (5 dimensions, 0–4 anchors) shared by LLM and human coders | done: `configs/rubric.yaml` |
-| 3 | LLM scoring on GPU via vLLM, repeated runs, evidence check | done: `dti score`; full run on PARAM Shavak since 2026-10-20 (llama.cpp, `scripts/shavak_score.sh`) |
+| 3 | LLM scoring on GPU (vLLM or llama.cpp), repeated runs, evidence check | done: `dti score`; full NCO corpus scored with qwen14b and llama8b_gguf on PARAM Shavak (21 Oct, 0 failed calls) |
 | 4 | Consensus, DTI, aggregation to NCO-2015 4/3-digit and NCO-2004 3-digit | done: `dti aggregate` |
-| 5 | Reliability: run stability, cross-model, human vs LLM | done: `dti reliability`; pilot in `reports/pilot_*.csv`; 200-occupation human forms out (`forms/`) |
+| 5 | Reliability: run stability, cross-model, human vs LLM | done: `dti reliability`; stability and cross-model results in `reports/`; human vs LLM waits for valid coder forms (two rounds rejected) |
 | 6 | Keyword baseline on NCO text | done: `dti baseline` |
-| 7 | O\*NET: same-prompt LLM scoring of O\*NET text, conventional measures, ISCO-08 crosswalk, India–US gap (RQ2) | done: `dti onet-download`, `onet-build`, `score --corpus onet`, `gap` — needs GPU (O\*NET and BLS files are in `data/raw/`) |
+| 7 | O\*NET: same-prompt LLM scoring of O\*NET text, conventional measures, ISCO-08 crosswalk, India–US gap (RQ2) | done: `dti onet-download`, `onet-build`, `score --corpus onet`, `gap`; O\*NET corpus scoring finishing 22 Oct |
 | 8 | PLFS harmonisation, all rounds (NCO-2004 and NCO-2015), wages, weights, DTI merge | done: `dti plfs-build`; all 7 rounds mapped in `configs/plfs.yaml` |
-| 9 | Wage models (RQ3–RQ4): FE ladder, Oster, robustness, wild bootstrap, Heckman, RIF/quantile, Oaxaca, interactions, DoubleML BLP/GATE, grf export | done: `dti analysis`; preliminary results with O\*NET-transferred DTI in `reports/econ_onet/` |
+| 9 | Wage models (RQ3–RQ4): FE ladder, Oster, robustness, wild bootstrap, Heckman, RIF/quantile, Oaxaca, interactions, DoubleML BLP/GATE, grf export | done: `dti analysis`; results with the NCO-LLM DTI in `reports/econ_llm/` (second model: `reports/econ_llm_llama8b_gguf/`), O\*NET-transferred in `reports/econ_onet/`; DoubleML learner comparison in `dml_learners.csv` |
 
 **Running it:** step-by-step runbook in [docs/HANDOFF.md](docs/HANDOFF.md).
 After the scoring run: `bash scripts/post_run.sh` (every step to the paper tables).
+**All results so far, with meaning:** [docs/RESULTS.md](docs/RESULTS.md) (regenerate with `python paper/results_doc.py`).
 **Writing the paper:** [docs/PAPER_GUIDE.md](docs/PAPER_GUIDE.md) (status by section, where each number comes from, timeline); draft in `paper/`.
 Decisions taken and open questions: [docs/decisions.md](docs/decisions.md).
 

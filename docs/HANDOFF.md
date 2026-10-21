@@ -1,5 +1,12 @@
 # Runbook: from code to results
 
+> **Status 21 Oct 2026: steps 0–8 have been run** on PARAM Shavak, not with vLLM/qwen32b as
+> written below but with llama.cpp and `qwen14b` + `llama8b_gguf` (16 GB Pascal GPU; see
+> [SHAVAK.md](SHAVAK.md), "What actually ran"). Results and their meaning: [RESULTS.md](RESULTS.md).
+> Still open: O*NET corpus scoring finishing (step 4, then `dti gap`), and valid human coder
+> forms (step 6; two rounds were rejected, see decisions.md). The commands below stay valid with
+> the model keys and scripts named in SHAVAK.md.
+
 For whoever runs the pipeline on the Nirma GPU and with the PLFS microdata. Every step
 is one command. Steps 1–4 need a GPU, steps 6–8 need PLFS. Steps already done in the repo
 are marked.
@@ -140,7 +147,8 @@ every round; unmatched occupation codes are listed there.
 | `oaxaca.csv` | gender gap: explained (DTI's share) vs unexplained |
 | `interactions.csv` | DTI × gender/rural/education/age/employment type; also with full occupation FE |
 | `subgroups.csv` | M4 by subgroup |
-| `dml_ate.csv`, `dml_blp.csv`, `dml_gate.csv` | DoubleML average effect, best linear projection, group effects |
+| `dml_ate.csv`, `dml_blp.csv`, `dml_gate.csv` | DoubleML average effect, best linear projection, group effects (gradient boosting) |
+| `dml_learners.csv` | DoubleML average effect under linear regression, Lasso, random forest and gradient boosting, occupation-clustered SEs, out-of-sample R² of each learner |
 | `grf_input.csv` | input for `Rscript scripts/grf_causal_forest.R` (causal forest; R not tested here) |
 
 Skip slow steps with `--skip dml cqr`. Specification choices (sample, outcome, FE,
