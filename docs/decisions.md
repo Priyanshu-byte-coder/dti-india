@@ -86,6 +86,15 @@ strict 0.77 / 0.83, described-task 0.80 / 0.69. Strict vs described within a mod
 | Human coders | The three forms received 2026-10-19 are not used: identical scores on all five dimensions for every occupation, evidence cells containing a number, 99%+ agreement between coders. A new round on a ~200-occupation sample is needed. | |
 | Validation sample | 200 occupations, stratified by division x keyword flag (description names a digital term): 70 keyword, 130 other, at least 2 per division stratum, pilot occupations excluded, seed 1. Weights (1 / inclusion probability) in `data/interim/validation_200_seed1.csv`. Forms: `forms/DTI_Validation_Form_200.xlsx`, per-coder copies in `forms/coders/`. Evidence cells now reject numbers. | `scripts/make_validation_form.py` |
 
+## Full run and revised decisions (2026-10-21)
+
+| Item | Decision | Reason |
+|---|---|---|
+| Human validation, round 2 | The two forms returned on 2026-10-21 (C1, C2) are **not used**. Stored privately in `data/human/_invalid_2026-10-21/`. | C2 is a near-copy of C1 (96% identical rows, identical evidence, coder ID "C1" in both); no 0 scores although rule 2 requires 0 when the text is silent; agriculture/elementary occupations score like professionals; 23% of evidence words appear in the description; scores repeat every 10 rows. A smaller valid sample (e.g. 100 occupations, 2 independent coders) is preferable to these. |
+| Second model in the wage analysis | Llama-based DTI reported as robustness: M4 2.3 (SE 1.2, p = 0.052) vs Qwen 4.1. | Same pattern, smaller; Llama is less stable (ICC 0.57–0.75) and scores more all-zero occupations, so measurement error attenuates its estimate. Supports Qwen as the main instrument. |
+| ML comparison (professors' request) | DoubleML average effect re-estimated with four nuisance learners (linear regression, cross-validated Lasso, random forest, gradient boosting), standard errors clustered by occupation and cluster-based cross-fitting; out-of-sample R² of each nuisance fit reported (Table 11, `dml_learners.csv`). | Shows the estimate does not depend on one ML model, and fixes the earlier DML standard errors, which treated workers as independent although DTI varies only across ~230 occupation groups. BLP/GATE (Table 10) keep gradient boosting. |
+| Causal forest | Not run yet: no R on PARAM Shavak, and `econml` would downgrade scikit-learn in the environment. Input file is exported (`grf_input.csv`, server only). | Planned in the implementation plan as the main heterogeneity ML; the paper should describe it as future work unless it is run elsewhere. |
+
 ## Open — needs professors' input (provisional answers above)
 
 1. **Digital vocabulary in NCO text is sparse.** Only 5.7% of the 3,450 descriptions use

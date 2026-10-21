@@ -366,20 +366,73 @@ def subgroups(df: pd.DataFrame, cfg: dict[str, Any]) -> pd.DataFrame:
     return pd.concat(rows, ignore_index=True)
 
 
-def double_ml(df: pd.DataFrame, cfg: dict[str, Any]) -> dict[str, pd.DataFrame]:
-    """Partially linear DML: average partial effect of DTI with flexible controls, then the
-    best linear projection (BLP) of effect heterogeneity on pre-specified covariates and
-    group average effects (GATE). Unweighted; nuisance learners are gradient boosting."""
-    import doubleml as dml
-    from sklearn.ensemble import HistGradientBoostingRegressor
-
-    c = cfg["dml"]
-    d = df.sample(n=min(len(df), c["max_obs"]), random_state=0).reset_index(drop=True)
+def _dml_sample(df: pd.DataFrame, cfg: dict[str, Any]) -> tuple[pd.DataFrame, pd.DataFrame]:
+    """Random subsample and the control matrix (controls + dummies) shared by the DML steps."""
+    d = df.sample(n=min(len(df), cfg["dml"]["max_obs"]), random_state=0).reset_index(drop=True)
     X = pd.concat([
         d[[x for x in cfg["controls"] if d[x].nunique() > 1]].astype(float),
         pd.get_dummies(d[["edu_cat", "social_group", "religion", "state", "nic2", "yq", "division"]].astype(str), drop_first=True, dtype=float),
     ], axis=1)
     X.columns = [f"x{i}" for i in range(X.shape[1])]
+    return d, X
+
+
+def _learner(name: str, max_iter: int):
+    from sklearn.ensemble import HistGradientBoostingRegressor, RandomForestRegressor
+    from sklearn.linear_model import LassoCV, LinearRegression
+    from sklearn.pipeline import make_pipeline
+    from sklearn.preprocessing import StandardScaler
+
+    return {
+        "linear": LinearRegression(),
+        "lasso": make_pipeline(StandardScaler(), LassoCV(cv=3, alphas=30, max_iter=5000, random_state=0)),
+        "random_forest": RandomForestRegressor(n_estimators=200, min_samples_leaf=20, max_features=0.3,
+                                               n_jobs=-1, random_state=0),
+        "gradient_boosting": HistGradientBoostingRegressor(max_iter=max_iter, random_state=0),
+    }[name]
+
+
+def dml_learners(df: pd.DataFrame, cfg: dict[str, Any]) -> pd.DataFrame:
+    """Average partial effect of DTI under different nuisance learners, with standard errors
+    clustered by occupation (DTI varies only across occupations) and cluster-based
+    cross-fitting. Out-of-sample RMSE / R² of the two nuisance predictions show which
+    learner fits best; a stable effect across learners shows it does not hinge on one."""
+    import doubleml as dml
+
+    c = cfg["dml"]
+    d, X = _dml_sample(df, cfg)
+    y = cfg["sample"]["outcome"]
+    data = pd.concat([d[[y, "dti_std", "occ_cluster_id"]], X], axis=1)
+    obj = dml.DoubleMLData(data, y_col=y, d_cols="dti_std", x_cols=list(X.columns), cluster_cols="occ_cluster_id")
+    rows = []
+    for name in c.get("learners", ["linear", "lasso", "random_forest", "gradient_boosting"]):
+        plr = dml.DoubleMLPLR(obj, ml_l=_learner(name, c["max_iter"]), ml_m=_learner(name, c["max_iter"]),
+                              n_folds=c["n_folds"])
+        plr.fit()
+        s = plr.summary.iloc[0]
+        rmse = plr.evaluate_learners()
+        rmse_l, rmse_m = float(np.mean(rmse["ml_l"])), float(np.mean(rmse["ml_m"]))
+        rows.append({
+            "learner": name, "coef": s["coef"], "se_cluster": s["std err"], "p": s["P>|t|"],
+            "ci_low": s["2.5 %"], "ci_high": s["97.5 %"],
+            "rmse_wage": rmse_l, "r2_wage": 1 - rmse_l ** 2 / d[y].var(),
+            "rmse_dti": rmse_m, "r2_dti": 1 - rmse_m ** 2 / d["dti_std"].var(),
+            "n": len(d), "n_clusters": d["occ_cluster_id"].nunique(),
+        })
+    return pd.DataFrame(rows)
+
+
+def double_ml(df: pd.DataFrame, cfg: dict[str, Any]) -> dict[str, pd.DataFrame]:
+    """Partially linear DML: average partial effect of DTI with flexible controls, then the
+    best linear projection (BLP) of effect heterogeneity on pre-specified covariates and
+    group average effects (GATE). Unweighted; nuisance learners are gradient boosting.
+    Standard errors here treat workers as independent; `dml_learners` gives the
+    occupation-clustered effect under several learners."""
+    import doubleml as dml
+    from sklearn.ensemble import HistGradientBoostingRegressor
+
+    c = cfg["dml"]
+    d, X = _dml_sample(df, cfg)
     data = pd.concat([d[[cfg["sample"]["outcome"], "dti_std"]].reset_index(drop=True), X], axis=1)
     obj = dml.DoubleMLData(data, y_col=cfg["sample"]["outcome"], d_cols="dti_std", x_cols=list(X.columns))
     learner = HistGradientBoostingRegressor(max_iter=c["max_iter"], random_state=0)

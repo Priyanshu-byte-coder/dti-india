@@ -57,4 +57,6 @@ dml:
   max_obs: 200000
   n_folds: 5
   max_iter: 200
+  # learner comparison for the average effect (step dml_learners), clustered by occupation
+  learners: [linear, lasso, random_forest, gradient_boosting]
   blp_basis: [female, rural, edu_middle_secondary, edu_tertiary, casual, age_15_24, age_45_64]

@@ -1,0 +1,3 @@
+model_name,n,spearman_q9_vs_equal_weight
+llama8b_gguf,3450,0.8773670366085304
+qwen14b,3450,0.8388718784727868

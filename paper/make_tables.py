@@ -133,6 +133,22 @@ def main(rep, label, out):
             t = t[["dimension", "group", "effect", "ci", "n_group"]].assign(effect=t["effect"].round(3), n_group=t["n_group"].map("{:,}".format))
             t.columns = ["Dimension", "Group", "Effect", "95% CI", "N"]
             parts += ["Group average effects:", "", md(t), ""]
+        parts += ["Standard errors in this table treat workers as independent; Table 11 gives the average effect "
+                  "with standard errors clustered by occupation.", ""]
+
+    lr = read(d, "dml_learners")
+    if lr is not None:
+        names = {"linear": "Linear regression", "lasso": "Lasso (cross-validated)", "random_forest": "Random forest",
+                 "gradient_boosting": "Gradient boosting"}
+        t = pd.DataFrame([[names.get(r.learner, r.learner), cell(r.coef, r.se_cluster, r.p),
+                           f"[{r.ci_low:.3f}, {r.ci_high:.3f}]", f"{r.r2_wage:.3f}", f"{r.r2_dti:.3f}"] for r in lr.itertuples()],
+                         columns=["Nuisance learner", "Average effect (cluster SE)", "95% CI", "Out-of-sample R², wage", "Out-of-sample R², DTI"])
+        a = lr.iloc[0]
+        parts += ["## Table 11. Double/debiased ML: comparison of machine-learning learners", "",
+                  f"Partially linear model, 5-fold cross-fitting by occupation cluster, standard errors clustered by occupation "
+                  f"({int(a['n_clusters'])} clusters), N = {int(a['n']):,} (random subsample). R² of the cross-fitted "
+                  "predictions of the wage and of DTI from the controls; the higher, the better the learner removes confounding.", "",
+                  md(t), ""]
 
     Path(out).write_text("\n".join(parts), encoding="utf-8")
     print(f"wrote {out}")

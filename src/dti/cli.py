@@ -403,6 +403,7 @@ def cmd_analysis(args) -> None:
         "interactions": lambda: E.interactions(sample, cfg),
         "subgroups": lambda: E.subgroups(sample, cfg),
         "dml": lambda: E.double_ml(sample, cfg),
+        "dml_learners": lambda: E.dml_learners(sample, cfg),
         "grf_input": lambda: E.grf_export(sample, cfg),
     }
     models = {}

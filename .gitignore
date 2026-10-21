@@ -20,6 +20,10 @@ reports/*
 !reports/econ_llm*/
 !reports/gap/
 !reports/pilot_*.csv
+!reports/stability_runs.csv
+!reports/cross_model.csv
+!reports/q9_vs_equal_weight.csv
+!reports/unstable_occupations.csv
 reports/**/grf_input.csv
 
 # Filled human coder forms: personal data of coders, shared privately

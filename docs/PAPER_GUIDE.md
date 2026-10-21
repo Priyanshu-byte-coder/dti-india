@@ -1,7 +1,7 @@
 # Paper writing guide
 
 For whoever writes or edits the paper. It says what is final, what is still coming, where
-every number comes from, and how to rebuild the Word file. Status as of **20 October 2026**.
+every number comes from, and how to rebuild the Word file. Status as of **21 October 2026, 18:00 IST**.
 
 ## Ground rules
 
@@ -79,13 +79,12 @@ structure of 6.1–6.2 (sub-headings, which table goes where).
 
 | When (IST) | What | Who |
 |---|---|---|
-| running since 20 Oct 03:15 | Full LLM scoring on PARAM Shavak: qwen14b → llama8b_gguf → O\*NET corpus | automatic (screen `dti-full`) |
-| 20 Oct, 18:00 | First 20 rows from each coder, checked for the problems below | coders → Priyanshu |
-| ~21 Oct, 06:00 | qwen14b finishes all 3,450 occupations (27% at 10:34 on 20 Oct) | automatic |
-| ~21 Oct, 16:00 | llama8b_gguf finishes (second model, for cross-model agreement) | automatic |
-| 21 Oct, 22:00 | All 200 occupations from each coder | coders |
-| ~22 Oct, 02:00 | O\*NET corpus scored (RQ2) | automatic |
-| 22 Oct | `scripts/post_run.sh` → all results; tables; draft updated; new Word file | Priyanshu |
+| 21 Oct 05:50 | qwen14b scored all 3,450 occupations × 5 runs, 0 failed | done |
+| 21 Oct 08:34 | Wage analysis with the NCO-LLM DTI → `reports/econ_llm/`, `paper/tables_llm.md` | done |
+| 21 Oct 15:40 | llama8b_gguf scored all occupations; cross-model agreement → `reports/cross_model.csv`; wage robustness → `reports/econ_llm_llama8b_gguf/` | done |
+| 21 Oct evening | DoubleML learner comparison (linear, Lasso, random forest, gradient boosting; occupation-clustered SEs) → `dml_learners.csv`, Table 11 | running |
+| ~22 Oct, 02:00 | O\*NET corpus scored with qwen14b (RQ2) → `dti aggregate --corpus onet`, `dti gap` | running |
+| open | Human validation: second round of forms (21 Oct) also unusable, see below | coders |
 
 ## After the run (what fills each marker)
 
@@ -115,6 +114,19 @@ For orientation only; source `reports/econ_onet/`, tables in `paper/tables_onet.
 - Women 8.6 vs men 3.5; DTI explains none of the 31.7-point gender gap (Oaxaca −0.1).
 - Rural–urban mixed (sign depends on specification).
 
+## Full-run findings (21 Oct, NCO-LLM DTI)
+
+- RQ1: run stability ICC 0.70–0.84 by dimension (Qwen), 0.57–0.75 (Llama); 87% of non-zero scores grounded
+  in a quote from the description; 51.6% of occupations all-zero (Llama 62.4%). Qwen vs Llama: Spearman 0.74
+  across 3,450 occupations, **0.91 at the 3-digit group level used in PLFS**, 0.89 families, 0.86 NCO-2004 groups.
+- RQ3 (Qwen DTI): M4 premium **4.1 log points (SE 1.3)**; O\*NET-transferred 5.7. With the Llama DTI: 2.3
+  (SE 1.2, p = 0.052): same pattern, smaller and borderline; Llama is the noisier instrument (attenuation).
+  Oster δ 0.34. Weaker in pre-2021 NCO-2004 rounds (3.1, p < 0.1).
+- RQ4: premium only at the top (RIF q90 21.3, q10–q50 n.s.); zero for up-to-primary education, informal regular
+  and casual workers; women 5.6 vs men 3.6; DTI explains ~none of the gender gap; rural–urban mixed.
+- Source files: `reports/econ_llm/`, `reports/econ_llm_llama8b_gguf/`, `reports/cross_model.csv`,
+  `reports/stability_runs.csv`; summary PDF `docs/DTI_Results_and_Status_2026-10-21.pdf`.
+
 ## Pilot findings (RQ1, 50 occupations)
 
 Main instrument: **Qwen2.5-14B with the strict rubric** (score only what the NCO text
@@ -130,6 +142,12 @@ about the official text (Section 3.1), not an error. Details in `docs/decisions.
   (70 keyword, 130 other), pilot occupations excluded, seed 1. Weights = 1 / inclusion
   probability, in `data/interim/validation_200_seed1.csv`.
 - Three coders (C1–C3), independent, blind to LLM scores. Forms sent 20 Oct.
+- **21 Oct: the two forms returned (C1, C2) failed every check** and are kept out of the analysis
+  (`data/human/_invalid_2026-10-21/`, not in git): C2 is a near-copy of C1 (96% identical rows,
+  identical evidence, coder ID "C1" in both files); no score of 0 anywhere; agriculture and
+  elementary occupations score like professionals; 23% of evidence words appear in the
+  description; scores repeat in a 10-row cycle. Until valid forms arrive, write RQ1 with run
+  stability and cross-model agreement and state that human validation is in progress.
 - Filled forms go in `data/human/` (gitignored: personal data of coders, not pushed).
 - **Checks before use** (the first round failed all three): scores differ across Q2–Q6
   for a reasonable share of occupations; evidence cells contain quotes from the
