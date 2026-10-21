@@ -2,7 +2,6 @@
 
     python paper/results_report.py . docs/DTI_Results_and_Status.pdf
 """
-"""
 import html
 import math
 import subprocess
