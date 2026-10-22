@@ -19,6 +19,7 @@ reports/*
 !reports/econ_onet/
 !reports/econ_llm*/
 !reports/gap/
+!reports/sample/
 !reports/pilot_*.csv
 !reports/stability_runs.csv
 !reports/run_log.csv
