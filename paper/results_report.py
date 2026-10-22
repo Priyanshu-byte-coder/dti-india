@@ -253,7 +253,7 @@ causal return. A second LLM ranks occupation groups almost identically (Spearman
 <li>Jobs run on PARAM Shavak (Quadro GP100) inside <code>screen</code>; they do not depend on anyone's laptop.</li>
 <li>All scoring and analysis is finished. Next: the paper draft is updated with these results. The human–LLM comparison runs as soon as
 valid coder forms arrive.</li>
-<li>Decisions still open for the professors: wage-model choices marked OPEN in <code>configs/analysis.yaml</code>; confirmation of the strict rubric (Section 2).</li>
+<li>Decisions still open for the professors: wage-model choices marked OPEN in <code>configs/analysis.yaml</code>; confirmation of the strict rubric (Section 2); price deflation — wages are nominal because no state CPI file was supplied, so inflation is absorbed by year-quarter fixed effects (add a CPI deflator or state this in the paper).</li>
 </ul>
 
 <h2>2. RQ1 — Is the LLM a reliable measurement instrument?</h2>

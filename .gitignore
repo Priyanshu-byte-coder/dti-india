@@ -21,6 +21,7 @@ reports/*
 !reports/gap/
 !reports/pilot_*.csv
 !reports/stability_runs.csv
+!reports/run_log.csv
 !reports/cross_model.csv
 !reports/q9_vs_equal_weight.csv
 !reports/unstable_occupations.csv

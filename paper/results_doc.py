@@ -396,7 +396,9 @@ concordances, 759 via the family mode, 32 via the group mode, 2 unlinked (`docs/
 2. **No valid human validation yet** (3.5).
 3. **Not causal:** Oster δ = {os_['delta_for_beta_0']:.2f}.
 4. **Coarse identifying variation:** ~230 occupation groups; equal weights within groups.
-5. **Weaker spots:** pre-2021 rounds (10% level), second LLM p = {m4l['p']:.3f}, Lasso/random-forest DML not significant at 5%,
+5. **Wages are nominal.** No state × sector CPI file was supplied, so the outcome is nominal (the variable name says "real");
+   year-quarter fixed effects absorb common inflation and state FE permanent price differences. Add a CPI file and re-run, or state this.
+6. **Weaker spots:** pre-2021 rounds (10% level), second LLM p = {m4l['p']:.3f}, Lasso/random-forest DML not significant at 5%,
    rural–urban mixed, {100 * n_uns / len(occ):.0f}% of occupations unstable on at least one dimension.
 
 ## 9. What is pending
@@ -407,6 +409,7 @@ concordances, 759 via the family mode, 32 via the group mode, 2 unlinked (`docs/
 | Paper draft updated with NCO-LLM results ([PENDING] markers) | Priyanshu / Neal | after RQ2 |
 | Conference format, page limit, deadline | professors | needed |
 | Approval of the wage-model defaults (OPEN in `configs/analysis.yaml`) | professors | needed |
+| CPI deflator (state × rural/urban) for real wages, or a sentence on year-quarter FE | professors / Priyanshu | before submission |
 | Causal forest (optional, needs R `grf` elsewhere) | — | optional |
 
 ## 10. Where every file is

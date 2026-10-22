@@ -25,6 +25,7 @@ by occupation code for the wage analysis.
 
 **Running it:** step-by-step runbook in [docs/HANDOFF.md](docs/HANDOFF.md).
 After the scoring run: `bash scripts/post_run.sh` (every step to the paper tables).
+**Implementation in full:** [docs/IMPLEMENTATION.md](docs/IMPLEMENTATION.md). **Figures:** `paper/figures/` explained in [docs/FIGURES_EXPLAINED.md](docs/FIGURES_EXPLAINED.md). **Data files:** [docs/DATA_DICTIONARY.md](docs/DATA_DICTIONARY.md). Shareable package: `python scripts/build_package.py`.
 **All results so far, with meaning:** [docs/RESULTS.md](docs/RESULTS.md) (regenerate with `python paper/results_doc.py`).
 **Writing the paper:** [docs/PAPER_GUIDE.md](docs/PAPER_GUIDE.md) (status by section, where each number comes from, timeline); draft in `paper/`.
 Decisions taken and open questions: [docs/decisions.md](docs/decisions.md).

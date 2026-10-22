@@ -1,0 +1,75 @@
+{
+  "corpus": "nco",
+  "code": "4313.0101",
+  "run": 0,
+  "seed": 0,
+  "model_name": "qwen14b",
+  "model": "qwen2.5-14b-instruct-q4_k_m",
+  "temperature": 0.7,
+  "prompt_version": "46a323537a",
+  "rubric_version": "1.0-strict",
+  "timestamp": "2026-10-20T09:41:36+00:00",
+  "ok": true,
+  "coding": {
+    "q1_detail": "Yes",
+    "dimensions": {
+      "D1": {
+        "rationale": "Uses various book-registers and records, and may operate a calculating machine, indicating standard software use.",
+        "evidence": "maintains various book-registers and records, calculating machine, may type letters",
+        "score": 2,
+        "confidence": 3
+      },
+      "D2": {
+        "rationale": "Prepares statements and checks accuracy, indicating handling of digital information.",
+        "evidence": "prepares pay and allowances bills, calculates income tax, Sales-tax, provident fund deductions, tabulates and prepares periodical expenditure statements",
+        "score": 3,
+        "confidence": 3
+      },
+      "D3": {
+        "rationale": "No specific mention of digital communication.",
+        "evidence": "",
+        "score": 0,
+        "confidence": 3
+      },
+      "D4": {
+        "rationale": "Uses specialised financial software for calculations and record-keeping.",
+        "evidence": "may operate calculating machine",
+        "score": 2,
+        "confidence": 2
+      },
+      "D5": {
+        "rationale": "Simple creation of documents and statements, no original content or non-routine problem solving.",
+        "evidence": "prepares pay and allowances bills, prepares balance sheets and annual budget statements",
+        "score": 1,
+        "confidence": 3
+      }
+    },
+    "q9_overall": 4,
+    "q10_core": "Supporting",
+    "q11_india_today": "Same",
+    "q12_comment": ""
+  },
+  "attempts": 1,
+  "latency_s": 61.40003097202862,
+  "usage": {
+    "completion_tokens": 363,
+    "prompt_tokens": 1835,
+    "total_tokens": 2198,
+    "completion_tokens_details": null,
+    "prompt_tokens_details": {
+      "audio_tokens": null,
+      "cache_write_tokens": null,
+      "cached_tokens": 1652,
+      "image_tokens": null,
+      "text_tokens": null
+    }
+  },
+  "errors": [],
+  "evidence_check": {
+    "D1": "not_found",
+    "D2": "not_found",
+    "D3": "empty",
+    "D4": "exact",
+    "D5": "not_found"
+  }
+}
