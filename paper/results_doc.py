@@ -96,7 +96,7 @@ paper is written see [PAPER_GUIDE.md](PAPER_GUIDE.md); for why each design choic
 3. RQ1 — the LLM instrument (pilot, full run, second model, human validation)
 4. RQ3 — conditional digital occupational wage premium
 5. RQ4 — heterogeneity (distribution, groups, interactions, gender gap, machine learning)
-6. RQ2 — India vs O*NET (partial; full results pending)
+6. RQ2 — India vs O*NET (same instrument, both texts)
 7. Data checks
 8. Weak points a reviewer will raise
 9. What is pending
@@ -136,7 +136,7 @@ paper is written see [PAPER_GUIDE.md](PAPER_GUIDE.md); for why each design choic
 | 21 Oct 15:40 | Full scoring, Llama, 17,250 calls, 0 failed; cross-model agreement; Llama wage robustness | `reports/cross_model.csv`, `reports/econ_llm_llama8b_gguf/` |
 | 21 Oct 17:45 | Second human coder forms (200-occupation sample) | rejected, see 3.5 |
 | 21 Oct 19:40 | DoubleML with four ML learners, occupation-clustered SEs (professors' request) | `dml_learners.csv` |
-| running | Qwen on 923 O*NET occupations (RQ2 same-instrument benchmark) | ETA 22 Oct ≈ 02:00 |
+| 21 Oct 15:40 – 22 Oct 01:02 | Qwen on 923 O*NET occupations (4,615 calls, 0 failed); 01:04 `dti aggregate --corpus onet`, `dti gap` | `reports/gap/` |
 """)
 
 # ------------------------------------------------------------------ RQ1
@@ -329,14 +329,57 @@ server; `econml` would downgrade scikit-learn); the grf input is exported on the
 """)
 
 # ------------------------------------------------------------------ RQ2, checks, risks, pending, files
-A(f"""## 6. RQ2 — India vs O*NET (partial)
+# RQ2
+G = R / "gap"
+corr = pd.read_csv(G / "correlations.csv")
+gl = pd.read_csv(G / "gap_dti_mean_score_llm.csv", dtype={"family4": str})
+gdiv = pd.read_csv(G / "gap_dti_mean_score_llm_by_division.csv", dtype={"division": str})
+gsk = pd.read_csv(G / "gap_dti_mean_score_llm_by_skill_level.csv", dtype={"skill_level": str})
+gmu = pd.read_csv(G / "gap_muro_0_100_by_division.csv", dtype={"division": str}).set_index("division")
+ONM = {"dti_mean_score_onet": "Same LLM prompt on O*NET text (mean 0–4)", "muro_0_100": "Muro et al. computer score",
+       "wa_computers_im": "O*NET Working with Computers", "kn_computers_im": "O*NET Computers & Electronics knowledge",
+       "cx_email": "O*NET e-mail frequency", "kw_share_core": "Share of core tasks with digital keywords"}
+cr = corr[corr["onet_measure"].isin(ONM)].copy()
+same = cr[cr["onet_measure"] == "dti_mean_score_onet"].iloc[0]
+top_gap = gl.sort_values("gap_raw", ascending=False).head(8)
+A(f"""## 6. RQ2 — India-specific vs O*NET-transferred intensity
 
-Visible so far: the O*NET-transferred measure gives a larger linear premium ({lp(m4o['coef'])} vs {lp(m4['coef'])}) and steeper education and
-formality gradients, but is less robust to flexible adjustment (5.6). **Pending (22 Oct):** the same LLM prompt applied to 923 O*NET
-occupations (so the comparison is text vs text, same method), family-level correlations and the DigitalGap by division and skill level
-(`dti aggregate --corpus onet`, `dti gap`, output `reports/gap/`).
+The same LLM and prompt (Qwen2.5-14B, strict rubric, 5 runs) scored 923 O*NET occupations from their O*NET description and core
+tasks, mapped to NCO-2015 families through SOC → ISCO-08 with US employment weights. Comparison at the 4-digit family level
+({int(same['n'])} families matched; 13 NCO families have no ISCO match, listed in `reports/gap/unmatched_codes.json`).
 
-## 7. Data checks
+### 6.1 Do the two measures rank occupations alike?
+
+""" + md(["O*NET measure", "Families", "Spearman", "Pearson"],
+          [[ONM[r.onet_measure], int(r.n), f"{r.spearman:.2f}", f"{r.pearson:.2f}"] for r in cr.itertuples()]) + f"""
+
+### 6.2 How large is the gap? (same instrument, 0–4 scale)
+
+Mean dimension score per family: NCO-2015 text **{gl['nco'].mean():.2f}**, O*NET text **{gl['onet'].mean():.2f}**; mean gap
+(O*NET − NCO) **{gl['gap_raw'].mean():+.2f}**, positive for {100 * (gl['gap_raw'] > 0).mean():.0f}% of families. Families scoring 0 on the NCO text:
+{100 * (gl['nco'] == 0).mean():.0f}%; on the O*NET text: {100 * (gl['onet'] == 0).mean():.0f}%.
+
+""" + md(["Division", "Families", "Gap, 0–4 scale (O*NET − NCO)", "Rank gap, same LLM (percentile points)", "Rank gap, Muro measure"],
+          [[f"{r.division} {DIV.get(r.division, '')}", int(r.gap_raw_count), f"{r.gap_raw_mean:+.2f}", f"{100 * r.gap_pct_mean:+.0f}",
+            f"{100 * gmu.loc[r.division, 'gap_pct_mean']:+.0f}" if r.division in gmu.index else "—"] for r in gdiv.itertuples()]) + """
+
+By skill level (0–4 scale gap): """ + "; ".join(f"level {r.skill_level} {r.gap_raw_mean:+.2f}" for r in gsk.itertuples()) + """.
+
+Largest gaps (O*NET text much more digital than the NCO text): """ + "; ".join(
+    f"{t} ({g:+.1f})" for t, g in zip(top_gap["family_title"], top_gap["gap_raw"])) + f""".
+
+**Meaning.** The two sources broadly agree on *which* occupations are digital (Spearman {same['spearman']:.2f} with the same instrument,
+0.49–0.61 with the conventional O*NET measures), so the India-specific DTI is externally anchored. But the *level* differs sharply: read by the
+same model with the same rubric, O*NET descriptions of matching occupations score about {gl['onet'].mean() / gl['nco'].mean():.1f} times as high as the
+NCO-2015 descriptions. The gap is largest for managers, professionals, technicians, clerks and skilled agriculture (about +0.9 to +1.4 on the 0–4 scale) and close
+to zero for elementary occupations. In relative (rank) terms O*NET places managers and skilled agriculture higher than the Indian texts do, and
+machine operators and elementary work lower. This is the RQ2 answer: transferring US task content to India overstates digital intensity,
+especially in white-collar and managerial work. On its own it cannot separate two explanations (Indian jobs being less digital, or the 2015 NCO
+texts describing work in less digital terms), which the paper should state. It fits the wage results: the O*NET measure gives a larger
+linear premium (5.7 vs 4.1) that is less robust to flexible ML adjustment (5.6).
+
+""")
+A(f"""## 7. Data checks
 
 PLFS workers matched to a DTI, by round (weighted):
 
@@ -360,7 +403,6 @@ concordances, 759 via the family mode, 32 via the group mode, 2 unlinked (`docs/
 
 | Item | Owner | When |
 |---|---|---|
-| RQ2 same-instrument O*NET comparison | pipeline (running) | 22 Oct morning |
 | Valid human coder forms (≥ 2 independent coders, ≥ 100 occupations) | professors / coders | open |
 | Paper draft updated with NCO-LLM results ([PENDING] markers) | Priyanshu / Neal | after RQ2 |
 | Conference format, page limit, deadline | professors | needed |

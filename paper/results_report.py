@@ -29,7 +29,7 @@ RUNNING = [
     ("Llama-3.1-8B scores all occupations (second model)", "Done (21 Oct, 15:40)", "17,250 / 17,250, 0 failed"),
     ("Cross-model agreement; wage robustness with the Llama DTI", "Done (21 Oct, 15:55)", "Sections 2 and 3"),
     ("DoubleML with four ML learners, occupation-clustered SEs", "Done (21 Oct)", "Section 4, last table"),
-    ("Qwen2.5-14B scores 923 O*NET occupations (RQ2 same-instrument benchmark)", "Running", ONET_PROGRESS),
+    ("Qwen2.5-14B scores 923 O*NET occupations; India vs O*NET gap (RQ2)", "Done (22 Oct, 01:04)", "4,615 / 4,615, 0 failed"),
     ("Human validation (coders)", "Not usable yet", "round 2 forms rejected, see Section 2"),
 ]
 
@@ -160,6 +160,17 @@ for r in lrn.itertuples():
     lrn_rows.append([LN[r.learner], lp(r.coef, r.se_cluster, r.p), f"[{100 * r.ci_low:.1f}, {100 * r.ci_high:.1f}]",
                      f"{r.r2_wage:.3f}", f"{r.r2_dti:.3f}", "—" if o is None else lp(o["coef"], o["se_cluster"], o["p"])])
 best = lrn.loc[lrn["r2_wage"].idxmax()]
+G = R / "gap"
+corr = pd.read_csv(G / "correlations.csv")
+ONM = {"dti_mean_score_onet": "Same LLM prompt on O*NET text", "muro_0_100": "Muro et al. computer score",
+       "wa_computers_im": "Working with Computers", "kn_computers_im": "Computers & Electronics knowledge",
+       "cx_email": "E-mail frequency", "kw_share_core": "Digital-keyword share of core tasks"}
+corr = corr[corr["onet_measure"].isin(ONM)]
+same = corr[corr["onet_measure"] == "dti_mean_score_onet"].iloc[0]
+corr_rows = [[ONM[r.onet_measure], f"{r.spearman:.2f}"] for r in corr.itertuples()]
+gl = pd.read_csv(G / "gap_dti_mean_score_llm.csv")
+gdiv = pd.read_csv(G / "gap_dti_mean_score_llm_by_division.csv", dtype={"division": str})
+gap_rows = [[f"{r.division}. {DIV.get(r.division, '')}", int(r.gap_raw_count), f"{r.gap_raw_mean:+.2f}"] for r in gdiv.itertuples()]
 not_sig = ", ".join(LN[x].split(" (")[0].lower() for x in lrn[lrn["p"] >= 0.05]["learner"]) or "no learner"
 onet_ml_note = ""
 if lrno is not None:
@@ -234,13 +245,13 @@ India-specific DTI goes with <b>{lp(m4['coef'])} log points (≈ {pct(m4['coef']
 occupational division (SE {100 * m4['se']:.1f}), somewhat below the {lp(m4o['coef'])} obtained with the US O*NET measure. The premium is
 concentrated at the top of the wage distribution and is absent for workers with at most primary education, informal regular
 jobs and casual work — the pattern the abstract calls a <i>digital-returns gap</i>. It is a conditional association, not a
-causal return. A second LLM ranks occupation groups almost identically (Spearman {lvl_rows[2][2]}), and the DML estimate is similar across four ML learners. Still to come: the India–US comparison RQ2 (22 Oct, early morning) and valid human validation.</div>
+causal return. A second LLM ranks occupation groups almost identically (Spearman {lvl_rows[2][2]}), and the DML estimate is similar across four ML learners. RQ2: the same LLM reads O*NET descriptions as about {gl['onet'].mean() / gl['nco'].mean():.1f} times as digital as the NCO texts for matching occupations. Still to come: valid human validation.</div>
 
 <h2>1. What is running and what is left</h2>
 {table(["Step", "Status", "Detail"], [[e(a), b, e(c)] for a, b, c in RUNNING], "left")}
 <ul>
 <li>Jobs run on PARAM Shavak (Quadro GP100) inside <code>screen</code>; they do not depend on anyone's laptop.</li>
-<li>After the O*NET scoring: same-instrument India vs O*NET gap (RQ2), then the paper draft is updated. The human–LLM comparison runs as soon as
+<li>All scoring and analysis is finished. Next: the paper draft is updated with these results. The human–LLM comparison runs as soon as
 valid coder forms arrive.</li>
 <li>Decisions still open for the professors: wage-model choices marked OPEN in <code>configs/analysis.yaml</code>; confirmation of the strict rubric (Section 2).</li>
 </ul>
@@ -345,10 +356,17 @@ higher-paid workers. For the less educated, informal and casual workforce the pr
 digital-skills gap: basic digital training alone is unlikely to close it without formalisation, advanced skills and access to digitally enabled jobs.</div>
 
 <h2>5. RQ2 — India-specific vs O*NET-transferred intensity</h2>
-<p>Partly visible already: with the same wage model, the US O*NET measure gives a larger average premium ({lp(m4o['coef'])} vs {lp(m4['coef'])}) and a larger
-gradient by education and formality. Whether this is because US occupations are described as more digital than their Indian counterparts is exactly what the RQ2 comparison tests.
-<b>Pending tonight:</b> the same LLM prompt applied to O*NET texts (so the gap reflects texts, not method), correlations at the occupation-family
-level, and the DigitalGap by division and skill level.</p>
+<p>The same LLM and prompt scored 923 O*NET occupations from their O*NET description and core tasks; both are compared at the NCO-2015
+family level ({int(same['n'])} families), mapped through SOC → ISCO-08 with US employment weights.</p>
+<div class=two><div><h3>Do they rank occupations alike?</h3>{table(["O*NET measure", "Spearman"], corr_rows)}</div>
+<div><h3>Gap by division (same LLM, 0–4 scale)</h3>{table(["Division", "Fam.", "O*NET − NCO"], gap_rows)}</div></div>
+<div class=mean><b>Meaning.</b> The two sources agree on <i>which</i> occupations are digital (Spearman {same['spearman']:.2f} with the same instrument),
+so the India-specific DTI is externally anchored. But the <i>level</i> differs sharply: read by the same model with the same rubric, O*NET descriptions
+score {gl['onet'].mean():.2f} on average against {gl['nco'].mean():.2f} for the NCO-2015 texts (about {gl['onet'].mean() / gl['nco'].mean():.1f} times as high; higher for
+{100 * (gl['gap_raw'] > 0).mean():.0f}% of families). The gap is largest for managers, professionals, technicians, clerks and skilled agriculture and close to zero
+for elementary work. <b>Answer to RQ2:</b> transferring US task content overstates the digital intensity of Indian occupations, especially
+white-collar and managerial work, and it gives a larger wage premium (5.7 vs 4.1) that is less robust to flexible ML adjustment. The comparison
+cannot by itself separate "Indian jobs are less digital" from "the 2015 NCO texts describe work in less digital terms"; the paper should say so.</div>
 
 <h2>6. Data and reproducibility</h2>
 <ul>
@@ -358,7 +376,7 @@ NCO-2015 → NCO-2004 concordance (2,657 direct links, others via siblings); O*N
 <li>PLFS microdata are not redistributed; only estimates appear in the repository. Code: private GitHub repository <code>dti-india</code>
 (guide for writing: <code>docs/PAPER_GUIDE.md</code>).</li>
 </ul>
-<p class=note>Preliminary results for internal discussion; numbers may change slightly once RQ2 and the human validation are added.</p>
+<p class=note>Preliminary results for internal discussion; numbers may change slightly once the human validation is added.</p>
 </body></html>"""]
 
 html_path = OUT.with_suffix(".html")

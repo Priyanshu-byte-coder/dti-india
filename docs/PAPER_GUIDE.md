@@ -1,7 +1,7 @@
 # Paper writing guide
 
 For whoever writes or edits the paper. **Every result so far, with tables and meaning: [RESULTS.md](RESULTS.md).** It says what is final, what is still coming, where
-every number comes from, and how to rebuild the Word file. Status as of **21 October 2026, 18:00 IST**.
+every number comes from, and how to rebuild the Word file. Status as of **22 October 2026, 07:30 IST**: all scoring and analysis finished; next is writing Section 6 of the draft.
 
 ## Ground rules
 
@@ -83,7 +83,7 @@ structure of 6.1–6.2 (sub-headings, which table goes where).
 | 21 Oct 08:34 | Wage analysis with the NCO-LLM DTI → `reports/econ_llm/`, `paper/tables_llm.md` | done |
 | 21 Oct 15:40 | llama8b_gguf scored all occupations; cross-model agreement → `reports/cross_model.csv`; wage robustness → `reports/econ_llm_llama8b_gguf/` | done |
 | 21 Oct 19:40 | DoubleML learner comparison (linear, Lasso, random forest, gradient boosting; occupation-clustered SEs) → `dml_learners.csv`, Table 11: India 2.6–4.4, O*NET 3.4–6.9 | done |
-| ~22 Oct, 02:00 | O\*NET corpus scored with qwen14b (RQ2) → `dti aggregate --corpus onet`, `dti gap` | running |
+| 22 Oct 01:04 | O\*NET corpus scored with qwen14b (4,615 calls, 0 failed); `dti aggregate --corpus onet`, `dti gap` → `reports/gap/`: Spearman 0.68 with the same instrument, O\*NET texts score 1.18 vs NCO 0.47 (0–4) | done |
 | open | Human validation: second round of forms (21 Oct) also unusable, see below | coders |
 
 ## After the run (what fills each marker)
